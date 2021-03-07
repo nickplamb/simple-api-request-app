@@ -1,0 +1,37 @@
+.card-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+.card-container__card {
+  max-width: 500px;
+  margin: 10px auto;
+  padding: 20px;
+  border: black 1px solid;
+  border-radius: 20px;
+  box-shadow: 4px 4px 10px #919191;
+}
+
+ul {
+  width: 230px;
+  list-style: none;
+  margin: 10px auto;
+  padding: 0;
+}
+
+li {
+  width: auto;
+  margin: 8px auto;
+}
+
+.btn-answer {
+  width: 230px;
+  padding: 5px;
+  text-align: left;
+  box-shadow: 2px 2px 2px #919191;
+}
+
+.btn-correctAnswer {
+  background-color: #008000;
+}
