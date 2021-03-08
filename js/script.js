@@ -30,7 +30,10 @@ let triviaRound = (function(){
         'False'
       ],
       correctAnswer: 'False'
-    }];
+    }
+  ];
+  // Array of required properties for each question
+  let questionObjectKeys = ['catagory', 'question', 'possibleAnswers', 'correctAnswer']
 
   // Retrieve all Questions for this round.
   function getAll() {
@@ -39,10 +42,30 @@ let triviaRound = (function(){
   // Add a new questions to this round.
   function add(newQuestion) {
     if (typeof newQuestion === 'object') {
-      triviaQuestions.push(newQuestion);
+      if (compareArrays(Object.keys(newQuestion), questionObjectKeys)) {
+        triviaQuestions.push(newQuestion);
+      } else {
+        console.error('Object does not have all required properties');
+      }
     } else {
-      console.log('nothing was added')
+      console.error('Not an object')
     }
+  }
+
+  // Function to compare the array of keys in new question to array to required keys
+  function compareArrays(arr1, arr2) {
+    // Compare lengths
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+    // Compare keys one by one.
+    for (let i = 0; i < arr2.length; i++) {
+      if (arr1[i] !== arr2[i]) {
+        return false;
+      }
+    }
+    // All passes?
+    return true;
   }
 
   // Return object with call to getAll and add functions
@@ -60,7 +83,7 @@ let newQuestion = {
     'True',
     'False'
   ],
-  correctAnswer: 'True'
+  correctAnswer: 'True',
 }
 
 // Add the newQuestion
