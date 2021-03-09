@@ -1,7 +1,40 @@
-body {
-  font-family: "Times New Roman", Times, serif;
+/* Different color pallet https://coolors.co/ef767a-456990-49beaa-49dcb1-eeb868*/
+/* :root {
+--btn-bg-color: #49beaaff;
+--btn-bg-hover: #49dcb1ff;
+--bg-color: #456990ff;
+--cards-bg-color: #eeb868ff;
+--cards-bg-shadow: #eeb868ff;
+--header-bg-color: #ef767aff;
+} */
+
+/* Color Pallet https://coolors.co/d0f1bf-b6d7b9-9abd97-646536-483d03 */
+:root {
+  --btn-bg-color: #646536;
+  --btn-bg-hover: #483d03;
+  --bg-color: #d0f1bf;
+  --cards-bg-color: #b6d7b9;
+  --cards-bg-shadow: #b6d7b9;
+  --header-bg-color: #9abd97;
 }
 
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  background-color: var(--bg-color);
+}
+
+header {
+  height: 80px;
+  background-color: var(--header-bg-color);
+}
+header h1 {
+  margin: 16px 30px;
+  display: inline-block;
+}
+header nav {
+  display: inline-block;
+}
 
 .card-container {
   max-width: 700px;
@@ -11,14 +44,16 @@ body {
 
 .card-container__card {
   max-width: 500px;
-  margin: 10px auto;
+  height: 300px;
+  margin: 25px auto;
   padding: 20px;
-  border: black 1px solid;
+  background-color: var(--cards-bg-color);
+  border: black 2px solid;
   border-radius: 20px;
-  box-shadow: 4px 4px 10px #919191;
+  box-shadow: 2px 2px 15px #919191; /*var(--cards-bg-shadow);/* */
 }
 
-ul {
+ul.answer-list {
   width: 230px;
   list-style: none;
   margin: 10px auto;
@@ -28,15 +63,20 @@ ul {
 li {
   width: auto;
   margin: 8px auto;
+  list-style: none;
 }
 
 .btn-answer {
   width: 230px;
-  padding: 5px;
+  padding: 10px;
   text-align: left;
+  background-color: var(--btn-bg-color);
+  border: 1px solid black;
+  border-radius: 15px;
   box-shadow: 2px 2px 2px #919191;
 }
 
-.btn-correctAnswer {
-  background-color: #008000;
+.btn-answer:hover {
+  background-color: var(--btn-bg-hover);
+  /* transition: .05s background-color; */
 }

@@ -68,6 +68,9 @@ let triviaRound = (function(){
     return true;
   }
 
+  function name(params) {
+    
+  }
   // Return object with call to getAll and add functions
   return {
     add: add,
@@ -103,7 +106,7 @@ allQuestions.forEach((question, index) => {
 function createCard(question, index) {
 
   // Container for each card
-  let card = document.createElement('div');
+  let card = document.createElement('li');
   card.classList.add('card-container__card');
   card.classList.add('question-card__' + (index + 1));
   
