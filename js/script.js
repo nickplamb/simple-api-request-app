@@ -89,44 +89,69 @@ let newQuestion = {
 // Add the newQuestion
 triviaRound.add(newQuestion);
 
-// Begin the round of trivia
-document.write('<main><section class="card-container"><h2>Round 1</h2>');
+let cardContainer = document.querySelector('.card-container');
 
 // Loop through each question in the round
-triviaRound.getAll().forEach((question, index) => {
-  document.write('<div class="card-container__card"');
+let allQuestions = triviaRound.getAll();
 
-  // Display the question in an h3 tag
-  document.write(`<h3>Question ${index +1}:</h3>`);
-  document.write(`<p>${question.question}</p>`);
-
-  // Display list of possible questions
-  document.write('<p>Possible answers:</p>');
-  document.write('<ul>');
-
-  // Loop through and display each possible answer
-  question.possibleAnswers.forEach((possibleAnswer, index) => {
-
-    // Highlight to the correct answer using correctAnswer class with css. Just because it was not easy enough.
-    if (possibleAnswer === question.correctAnswer) {
-      document.write(`<li><input type="button" class="btn-answer btn-correctAnswer" value="${index + 1}: ${possibleAnswer}"></li>`);
-    } else {
-      document.write(`<li><input type="button" class="btn-answer" value="${index + 1}: ${possibleAnswer}"></li>`);
-    }
-  });
-  document.write('</ul></div>');
+allQuestions.forEach((question, index) => {
+  cardContainer.appendChild(createCard(question, index));
 });
-document.write('</section></main>')
+
+
+// Creates a div.card-container__card with the question and a ul of buttons as answers.
+function createCard(question, index) {
+
+  // Container for each card
+  let card = document.createElement('div');
+  card.classList.add('card-container__card');
+  card.classList.add('question-card__' + (index + 1));
+  
+  // Header
+  let cardHeader = document.createElement('h3');
+  cardHeader.innerText = 'Question ' + (index + 1) + ':';
+  
+  // Question
+  let cardQuestion = document.createElement('p');
+  cardQuestion.innerText = question.question;
+
+  // Answer List
+  let answerList = document.createElement('ul');
+  answerList.classList.add('answer-list');
+
+
+  card.appendChild(cardHeader);
+  card.appendChild(cardQuestion);
+  card.appendChild(answerList);
+
+  // Loop through possible answers, create li with button for each
+  // Add each li to .answer-list ul
+  question.possibleAnswers.forEach((possibleAnswer, index) => {
+    let answerListItem = document.createElement('li');
+    
+    // Create Button with class and possible answer
+    let answerbtn = document.createElement('button');
+    answerbtn.classList.add('btn-answer');
+    answerbtn.innerText = possibleAnswer;
+    answerbtn.value = index+1;
+
+    // add button to li
+    answerListItem.appendChild(answerbtn);
+
+    answerList.appendChild(answerListItem);
+  });
+
+  return card;
+}
+
+// -------Event listeners-----
 
 
 
-
-// // Doesnt work yet.  question.correctAnswer is out of scope.
-// function loopThroughPossibleAnswers(possibleAnswer, index) {
-//   // Highlight to the correct answer using correctAnswer class with css. Just because it was not easy enough.
-//   if (possibleAnswer === question.correctAnswer) {
-//     document.write(`<li><input type="button" class="btn-answer btn-correctAnswer" value="${index + 1}: ${possibleAnswer}"></li>`);
-//   } else {
-//     document.write(`<li><input type="button" class="btn-answer" value="${index + 1}: ${possibleAnswer}"></li>`);
-//   }
-// }
+function checkAnswer(slectedChoice, ) {
+  if (choice === question.correctAnswer) {
+    
+  } else {
+    
+  }
+}
