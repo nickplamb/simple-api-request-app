@@ -24,8 +24,7 @@
     </nav>
   </header>
   <main>
-    <section class="start-form-container">
-      <div class="start-form">
+    <section class="start-form card">
         <h2>Select Your Options</h2>
         <form action="#" method="get">
           <label for="num-of-questions" class="start-form__item">How Many Questions in this Round</label>
@@ -34,27 +33,26 @@
             <option value="15">15</option>
             <option value="20">20</option>
           </select>
-          <label for="catagories" class="start-form__item">Select a Catagory</label>
-          <select name="catagories" id="catagories" class="start-form__item">
-            <option value="any">Any Catagory</option>
+          <label for="categories" class="start-form__item">Select a Category</label>
+          <select name="categories" id="categories" class="start-form__item">
+            <option value="">Any Category</option>
             <!-- Us JS to spit out the rest -->
           </select>
           <label for="difficulties" class="start-form__item">Select a Difficulty</label>
           <select name="difficulties" id="difficulties" class="start-form__item">
-            <option value="any">Any Difficulty</option>
+            <option value="">Any Difficulty</option>
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
           <label for="question-type" class="start-form__item">Select a Type of Question</label>
           <select name="question-type" id="question-type" class="start-form__item">
-            <option value="any">Any Type</option>
+            <option value="">Any Type</option>
             <option value="multiple">Multiple Choice</option>
             <option value="boolean">True or False</option>
           </select>
-          <button type="button" id="start-round" class="start-form__item">Lets Start!</button>
+          <button type="submit" id="start-round" class="start-form__item">Lets Start!</button>
         </form>
-      </div>
     </section>
     <h2>Round 1</h2>
     <ul class="card-container">
