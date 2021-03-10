@@ -18,6 +18,9 @@
   --header-bg-color: #9abd97;
 }
 
+* {
+  box-sizing: border-box;
+}
 
 body {
   font-family: "Times New Roman", Times, serif;
@@ -28,23 +31,54 @@ header {
   height: 80px;
   background-color: var(--header-bg-color);
 }
+
 header h1 {
   margin: 16px 30px;
   display: inline-block;
 }
+
 header nav {
   display: inline-block;
 }
 
-.card-container {
+main {
   max-width: 700px;
+  margin: 0 auto;
+}
+
+.start-form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.start-form__item {
+  display: block;
+  margin: 5px auto;
+}
+
+select.start-form__item {
+  width: 100%;
+  height: 30px;
+  border-radius: 15px;
+}
+
+button.start-form__item {
+  margin-top: 15px;
+}
+
+
+.card-container,
+.start-form-container {
+  max-width: 800px;
   margin: 0 auto;
   padding: 0 30px;
 }
 
-.card-container__card {
-  max-width: 500px;
-  height: 300px;
+.card-container__card,
+.start-form {
+  max-width: 600px;
+  height: 400px;
   margin: 25px auto;
   padding: 20px;
   background-color: var(--cards-bg-color);
@@ -62,11 +96,12 @@ ul.answer-list {
 
 li {
   width: auto;
-  margin: 8px auto;
+  margin: 18px auto;
   list-style: none;
 }
 
-.btn-answer {
+.btn-answer,
+button.start-form__item {
   width: 230px;
   padding: 10px;
   text-align: left;
@@ -76,7 +111,8 @@ li {
   box-shadow: 2px 2px 2px #919191;
 }
 
-.btn-answer:hover {
+.btn-answer:hover,
+button.start-form__item:hover {
   background-color: var(--btn-bg-hover);
   /* transition: .05s background-color; */
 }

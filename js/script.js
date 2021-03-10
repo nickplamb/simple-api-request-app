@@ -33,7 +33,7 @@ let triviaRound = (function(){
     }
   ];
   // Array of required properties for each question
-  let questionObjectKeys = ['catagory', 'question', 'possibleAnswers', 'correctAnswer']
+  let questionObjectTemplate = ['catagory', 'question', 'possibleAnswers', 'correctAnswer']
 
   // Retrieve all Questions for this round.
   function getAll() {
@@ -42,7 +42,7 @@ let triviaRound = (function(){
   // Add a new questions to this round.
   function add(newQuestion) {
     if (typeof newQuestion === 'object') {
-      if (compareArrays(Object.keys(newQuestion), questionObjectKeys)) {
+      if (compareArrays(Object.keys(newQuestion), questionObjectTemplate)) {
         triviaQuestions.push(newQuestion);
       } else {
         console.error('Object does not have all required properties');
@@ -53,14 +53,16 @@ let triviaRound = (function(){
   }
 
   // Function to compare the array of keys in new question to array to required keys
-  function compareArrays(arr1, arr2) {
+  function compareArrays(arr1, template) {
     // Compare lengths
-    if (arr1.length !== arr2.length) {
+    if (arr1.length !== template.length) {
       return false;
     }
     // Compare keys one by one.
-    for (let i = 0; i < arr2.length; i++) {
-      if (arr1[i] !== arr2[i]) {
+
+    
+    for (let i = 0; i < template.length; i++) {
+      if (arr1[i] !== template[i]) {
         return false;
       }
     }
@@ -68,13 +70,55 @@ let triviaRound = (function(){
     return true;
   }
 
-  function name(params) {
+  // Creates a div.card-container__card with the question and a ul of buttons as answers.
+  function addListItem(question, index) {
+    // Container for each card
+    let card = document.createElement('li');
+    card.classList.add('card-container__card');
+    card.classList.add('question-card__' + (index + 1));
     
+    // Header
+    let cardHeader = document.createElement('h3');
+    cardHeader.innerText = 'Question ' + (index + 1) + ':';
+    
+    // Question
+    let cardQuestion = document.createElement('p');
+    cardQuestion.innerText = question.question;
+
+    // Answer List
+    let answerList = document.createElement('ul');
+    answerList.classList.add('answer-list');
+
+
+    card.appendChild(cardHeader);
+    card.appendChild(cardQuestion);
+    card.appendChild(answerList);
+
+    // Loop through possible answers, create li with button for each
+    // Add each li to .answer-list ul
+    question.possibleAnswers.forEach((possibleAnswer, index) => {
+      let answerListItem = document.createElement('li');
+      
+      // Create Button with class and possible answer
+      let answerbtn = document.createElement('button');
+      answerbtn.classList.add('btn-answer');
+      answerbtn.innerText = possibleAnswer;
+      answerbtn.value = index+1;
+
+      // add button to li
+      answerListItem.appendChild(answerbtn);
+
+      answerList.appendChild(answerListItem);
+    });
+
+    return card;
   }
-  // Return object with call to getAll and add functions
+
+  // Return object with call to available functions
   return {
     add: add,
-    getAll: getAll
+    getAll: getAll,
+    addListItem: addListItem
   };
 })();
 
@@ -92,59 +136,19 @@ let newQuestion = {
 // Add the newQuestion
 triviaRound.add(newQuestion);
 
+// Grab containing element
 let cardContainer = document.querySelector('.card-container');
 
-// Loop through each question in the round
+// Grab all questions
 let allQuestions = triviaRound.getAll();
 
+// Loop through each question in the round
 allQuestions.forEach((question, index) => {
-  cardContainer.appendChild(createCard(question, index));
+  cardContainer.appendChild(triviaRound.addListItem(question, index));
 });
 
-
-// Creates a div.card-container__card with the question and a ul of buttons as answers.
-function createCard(question, index) {
-
-  // Container for each card
-  let card = document.createElement('li');
-  card.classList.add('card-container__card');
-  card.classList.add('question-card__' + (index + 1));
-  
-  // Header
-  let cardHeader = document.createElement('h3');
-  cardHeader.innerText = 'Question ' + (index + 1) + ':';
-  
-  // Question
-  let cardQuestion = document.createElement('p');
-  cardQuestion.innerText = question.question;
-
-  // Answer List
-  let answerList = document.createElement('ul');
-  answerList.classList.add('answer-list');
-
-
-  card.appendChild(cardHeader);
-  card.appendChild(cardQuestion);
-  card.appendChild(answerList);
-
-  // Loop through possible answers, create li with button for each
-  // Add each li to .answer-list ul
-  question.possibleAnswers.forEach((possibleAnswer, index) => {
-    let answerListItem = document.createElement('li');
-    
-    // Create Button with class and possible answer
-    let answerbtn = document.createElement('button');
-    answerbtn.classList.add('btn-answer');
-    answerbtn.innerText = possibleAnswer;
-    answerbtn.value = index+1;
-
-    // add button to li
-    answerListItem.appendChild(answerbtn);
-
-    answerList.appendChild(answerListItem);
-  });
-
-  return card;
+function decodeBase64(msg) {
+  return atob(msg);
 }
 
 // -------Event listeners-----
