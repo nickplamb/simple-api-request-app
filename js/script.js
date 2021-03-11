@@ -3,6 +3,8 @@ let triviaRound = (function(){
   // Array of question objects with answers.
   let triviaQuestions = [];
 
+  let allCategories = [];
+
   let apiBaseUrl = 'https://opentdb.com/api.php?encode=base64';
   // Array of required properties for each question
   let questionObjectTemplate = ['category', 'type', 'difficulty', 'question', 'correct_answer', 'incorrect_answers']
@@ -39,6 +41,37 @@ let triviaRound = (function(){
     return true;
   }
 
+  // Populate category array used by category dropdown
+  function loadCategories() {
+    let categoriesUrl = 'https://opentdb.com/api_category.php';
+    return fetch(categoriesUrl).then(response => {
+      return response.json();
+    }).then(json => {
+      json.trivia_categories.forEach(category => {
+        let categoryListItem = {
+          id: category.id,
+          name: category.name
+        }
+        allCategories.push(categoryListItem);
+      });
+      addCategoriesToDropDown();
+    }).catch(e => {
+      console.log(e)
+    })
+  }
+
+  function addCategoriesToDropDown() {
+    let dropDown = document.querySelector('#categories');
+    allCategories.forEach(item => {
+      let listItem = document.createElement('option');
+      listItem.setAttribute('value', item.id);
+      listItem.innerText = item.name;
+
+      dropDown.appendChild(listItem);
+    });
+  }
+
+  // Build query string from start form. call fetchQuestions func. to make request.
   function loadQuestions(e) {
     e.preventDefault();
     let url = apiBaseUrl;
@@ -54,31 +87,39 @@ let triviaRound = (function(){
         url += '&' + option[0] + '=' + option[1];
       }
     });
-    console.log(query);
     fetchQuestions(url);
   }
 
+  // Make api request, add response to question array, show questions to user
   function fetchQuestions(url) {
     return fetch(url).then(response => {
         return response.json();
       }).then(json => {
-        json.results.forEach(item => {
-          let question = {
-            category: decodeBase64(item.category),
-            type: decodeBase64(item.type),
-            difficulty: decodeBase64(item.difficulty),
-            question: decodeBase64(item.question),
-            correct_answer: decodeBase64(item.correct_answer),
-            incorrect_answers: decodeBase64(item.incorrect_answers)
-          }
-          add(question);
-        });
+        if (json.results.length !== 0) {
+          json.results.forEach(item => {
+            let question = {
+              category: decodeBase64(item.category),
+              type: decodeBase64(item.type),
+              difficulty: decodeBase64(item.difficulty),
+              question: decodeBase64(item.question),
+              correct_answer: decodeBase64(item.correct_answer),
+              incorrect_answers: decodeBase64(item.incorrect_answers)
+            }
+            add(question);
+          });
+        } else {
+          console.log('Too Specific');
+          // Display error message to user:
+          // 'There are no ${difficulty} ${questionType} questions in ${category}'
+          // with logic to determine which options were selected and taylor response.
+        }
         displayQuestions();
       }).catch(e => {
         console.log(e)
       })
   }
 
+  // Response is base64 encoded for special character, decode base64
   function decodeBase64(msg) {
     if (typeof msg === 'object') {
       let msgArr = [];
@@ -91,14 +132,15 @@ let triviaRound = (function(){
     }
   }
 
+  // Grab question array and loop through, sending each to addListItem func. for html creation
   function displayQuestions() {
     // Grab all questions
     let allQuestions = getAll();
 
     // Loop through each question in the round
     allQuestions.forEach((question, index) => {
+      let cardContainer = document.querySelector('.card-container');
       cardContainer.appendChild(addListItem(question, index));
-      // console.log(question);
     });
   }
 
@@ -216,24 +258,13 @@ let triviaRound = (function(){
     add: add,
     getAll: getAll,
     addListItem: addListItem,
-    loadQuestions: loadQuestions
+    loadQuestions: loadQuestions,
+    loadCategories: loadCategories
   };
 })();
 
-// Grab containing element
-let cardContainer = document.querySelector('.card-container');
+triviaRound.loadCategories();
 
 // -------Event listeners-----
 let optionsBtn = document.querySelector('button.start-form__item');
 optionsBtn.addEventListener('click', triviaRound.loadQuestions);
-
-
-
-
-
-
-
-
-
-
-
