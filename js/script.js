@@ -1,39 +1,43 @@
 let triviaRound = (function(){
+
+  // {"response_code":0,"results":[{
+  //   "category":"Science & Nature",
+  //   "type":"multiple",
+  //   "difficulty":"hard",
+  //   "question":"An organic compound is considered an alcohol if it has what functional group?",
+  //   "correct_answer":"Hydroxyl",
+  //   "incorrect_answers":["Carbonyl","Alkyl","Aldehyde"]
+  //   }]
+  // }
+
+
   // Array of question objects with answers.
   let triviaQuestions = [{
-      catagory: 'science',
-      question: 'What is the acceleration due to gravity on earth?',
-      possibleAnswers: [
-        '9.8 meters per second',
-        '9.8 meters per second squared',
-        '7.2 meters per second squared',
-        '7.2 meters per second'
-      ],
-      correctAnswer: '9.8 meters per second squared'
+      "category":"General Knowledge",
+      "type":"multiple",
+      "difficulty":"easy",
+      "question":"Which one of the following rhythm games was made by Harmonix?",
+      "correct_answer":"Rock Band",
+      "incorrect_answers":["Meat Beat Mania","Guitar Hero Live","Dance Dance Revolution"]
     },
     {
-      catagory: 'Entertainment',
-      question: 'Who played Colonel Jack O\'Neill on the TV show Stargate SG1?',
-      possibleAnswers: [
-        'Christphoer Judge',
-        'Michael Shanks',
-        'Don S. Davis',
-        'Richard Dean Anderson'
-      ],
-      correctAnswer: 'Richard Dean Anderson'
+      "category":"General Knowledge",
+      "type":"multiple","difficulty":"medium",
+      "question":"Who is the founder of &quot;The Lego Group&quot;?",
+      "correct_answer":"Ole Kirk Christiansen",
+      "incorrect_answers":[" Jens Niels Christiansen","Kirstine Christiansen"," Gerhardt Kirk Christiansen"]
     },
     {
-      catagory: 'Art',
-      question: 'Rembrandt painted "Starry Night".',
-      possibleAnswers: [
-        'True',
-        'False'
-      ],
-      correctAnswer: 'False'
+      "category":"General Knowledge",
+      "type":"multiple",
+      "difficulty":"medium",
+      "question":"What character was once considered to be the 27th letter of the alphabet?",
+      "correct_answer":"Ampersand",
+      "incorrect_answers":["Interrobang","Tilde","Pilcrow"]
     }
   ];
   // Array of required properties for each question
-  let questionObjectTemplate = ['catagory', 'question', 'possibleAnswers', 'correctAnswer']
+  let questionObjectTemplate = ['category', 'type', 'difficulty', 'question', 'correct_answer', 'incorrect_answers']
 
   // Retrieve all Questions for this round.
   function getAll() {
@@ -70,6 +74,9 @@ let triviaRound = (function(){
 
   // Creates a div.card-container__card with the question and a ul of buttons as answers.
   function addListItem(question, questionIndex) {
+    let possibleAnswers = question.incorrect_answers.slice();
+    possibleAnswers.push(question.correct_answer);
+    
     // Container for each card
     let card = document.createElement('li');
     card.classList.add('card-container__card');
@@ -111,7 +118,7 @@ let triviaRound = (function(){
 
     // Loop through possible answers, create li with button for each
     // Add each li to .answer-list ul
-    question.possibleAnswers.forEach((possibleAnswer, answerIndex) => {
+    possibleAnswers.forEach((possibleAnswer, answerIndex) => {
       let answerListItem = document.createElement('li');
       
       // Create Button with class and possible answer
@@ -161,7 +168,7 @@ let triviaRound = (function(){
       // cardBackHeader.classList.add('');
 
       // Determine if the answer selected is correct.
-      if (answerSelected === question.correctAnswer) {
+      if (answerSelected === question.correct_answer) {
         cardBackHeader.innerText = 'You are so smart!'
       } else {
         cardBackHeader.innerText = 'Isn\'t that cute. BUT IT\'S WRONG!'
@@ -184,19 +191,16 @@ let triviaRound = (function(){
 
 // New question to be added to triviaRound
 let newQuestion = {
-  catagory: 'Entertainment: Music',
-  question: 'The cover of The Beatles album &quot;Abbey Road&quot; featured a Volkswagen Beetle in the background.',
-  possibleAnswers: [
-    'True',
-    'False'
-  ],
-  correctAnswer: 'True',
-}
-
-
-
+    "category":"Entertainment: Film",
+    "type":"boolean",
+    "difficulty":"hard",
+    "question":"The weapon Clint Eastwood uses in &quot;Dirty Harry&quot; was a .44 Automag.",
+    "correct_answer":"False",
+    "incorrect_answers":["True"]
+  }
 // Add the newQuestion
 triviaRound.add(newQuestion);
+
 
 // Grab containing element
 let cardContainer = document.querySelector('.card-container');
@@ -209,35 +213,21 @@ allQuestions.forEach((question, index) => {
   cardContainer.appendChild(triviaRound.addListItem(question, index));
 });
 
+// -------Event listeners-----
+let optionsBtn = document.querySelector('button.start-form__item');
+// optionsBtn.addEventListener('click', getQuestionsFromOpenDB);
+
+
+
+
+
+
 function decodeBase64(msg) {
   let decodedObject = new Object;
   // msg.entries().forEach
 //  console.log(msg);
   // return decodedObject;
 }
-
-// -------Event listeners-----
-let optionsBtn = document.querySelector('button.start-form__item');
-// optionsBtn.addEventListener('click', getQuestionsFromOpenDB);
-
-let parentCard = document.querySelector
-if (parent.addEventListener) {
-    parent.addEventListener('click', handler, false);
-}else if (parent.attachEvent) {
-    parent.attachEvent('onclick', handler);
-}
-
-function handler(e) {
-    if (e.target.id == 'test') {
-         // the button was clicked
-    }
-}
-
-
-
-
-
-
 
 function getQuestionsFromOpenDB() {
   let url = 'https://opentdb.com/api.php?encode=base64';
