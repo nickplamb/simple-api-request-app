@@ -1,41 +1,9 @@
 let triviaRound = (function(){
 
-  // {"response_code":0,"results":[{
-  //   "category":"Science & Nature",
-  //   "type":"multiple",
-  //   "difficulty":"hard",
-  //   "question":"An organic compound is considered an alcohol if it has what functional group?",
-  //   "correct_answer":"Hydroxyl",
-  //   "incorrect_answers":["Carbonyl","Alkyl","Aldehyde"]
-  //   }]
-  // }
-
-
   // Array of question objects with answers.
-  let triviaQuestions = [{
-      "category":"General Knowledge",
-      "type":"multiple",
-      "difficulty":"easy",
-      "question":"Which one of the following rhythm games was made by Harmonix?",
-      "correct_answer":"Rock Band",
-      "incorrect_answers":["Meat Beat Mania","Guitar Hero Live","Dance Dance Revolution"]
-    },
-    {
-      "category":"General Knowledge",
-      "type":"multiple","difficulty":"medium",
-      "question":"Who is the founder of &quot;The Lego Group&quot;?",
-      "correct_answer":"Ole Kirk Christiansen",
-      "incorrect_answers":[" Jens Niels Christiansen","Kirstine Christiansen"," Gerhardt Kirk Christiansen"]
-    },
-    {
-      "category":"General Knowledge",
-      "type":"multiple",
-      "difficulty":"medium",
-      "question":"What character was once considered to be the 27th letter of the alphabet?",
-      "correct_answer":"Ampersand",
-      "incorrect_answers":["Interrobang","Tilde","Pilcrow"]
-    }
-  ];
+  let triviaQuestions = [];
+
+  let apiBaseUrl = 'https://opentdb.com/api.php?encode=base64';
   // Array of required properties for each question
   let questionObjectTemplate = ['category', 'type', 'difficulty', 'question', 'correct_answer', 'incorrect_answers']
 
@@ -55,7 +23,6 @@ let triviaRound = (function(){
       console.error('Not an object');
     }
   }
-
   // Function to compare the array of keys in new question to array to required keys
   function compareArrays(arr1, template) {
     // Compare lengths
@@ -70,6 +37,69 @@ let triviaRound = (function(){
     }
     // All passes?
     return true;
+  }
+
+  function loadQuestions(e) {
+    e.preventDefault();
+    let url = apiBaseUrl;
+
+    let query = new Object;
+    query.amount = document.querySelector('#num-of-questions').value;
+    query.category = document.querySelector('#categories').value;
+    query.difficulty = document.querySelector('#difficulties').value;
+    query.type = document.querySelector('#question-type').value;
+
+    Object.entries(query).forEach(option => {
+      if (option[1] !== '') {
+        url += '&' + option[0] + '=' + option[1];
+      }
+    });
+    console.log(query);
+    fetchQuestions(url);
+  }
+
+  function fetchQuestions(url) {
+    return fetch(url).then(response => {
+        return response.json();
+      }).then(json => {
+        json.results.forEach(item => {
+          let question = {
+            category: decodeBase64(item.category),
+            type: decodeBase64(item.type),
+            difficulty: decodeBase64(item.difficulty),
+            question: decodeBase64(item.question),
+            correct_answer: decodeBase64(item.correct_answer),
+            incorrect_answers: decodeBase64(item.incorrect_answers)
+          }
+          add(question);
+        });
+        displayQuestions();
+      }).catch(e => {
+        console.log(e)
+      })
+  }
+
+  function decodeBase64(msg) {
+    if (typeof msg === 'object') {
+      let msgArr = [];
+      msg.forEach(item => {
+        msgArr.push(atob(item));
+      });
+      return msgArr;
+    } else {
+      return atob(msg);
+    }
+  }
+
+  function displayQuestions() {
+    // Grab all questions
+    let allQuestions = getAll();
+
+    // Loop through each question in the round
+    allQuestions.forEach((question, index) => {
+      cardContainer.appendChild(addListItem(question, index));
+      // console.log(question);
+    });
   }
 
   // Creates a div.card-container__card with the question and a ul of buttons as answers.
@@ -185,82 +215,25 @@ let triviaRound = (function(){
   return {
     add: add,
     getAll: getAll,
-    addListItem: addListItem
+    addListItem: addListItem,
+    loadQuestions: loadQuestions
   };
 })();
-
-// New question to be added to triviaRound
-let newQuestion = {
-    "category":"Entertainment: Film",
-    "type":"boolean",
-    "difficulty":"hard",
-    "question":"The weapon Clint Eastwood uses in &quot;Dirty Harry&quot; was a .44 Automag.",
-    "correct_answer":"False",
-    "incorrect_answers":["True"]
-  }
-// Add the newQuestion
-triviaRound.add(newQuestion);
-
 
 // Grab containing element
 let cardContainer = document.querySelector('.card-container');
 
-// Grab all questions
-let allQuestions = triviaRound.getAll();
-
-// Loop through each question in the round
-allQuestions.forEach((question, index) => {
-  cardContainer.appendChild(triviaRound.addListItem(question, index));
-});
-
 // -------Event listeners-----
 let optionsBtn = document.querySelector('button.start-form__item');
-// optionsBtn.addEventListener('click', getQuestionsFromOpenDB);
+optionsBtn.addEventListener('click', triviaRound.loadQuestions);
 
 
 
 
 
 
-function decodeBase64(msg) {
-  let decodedObject = new Object;
-  // msg.entries().forEach
-//  console.log(msg);
-  // return decodedObject;
-}
-
-function getQuestionsFromOpenDB() {
-  let url = 'https://opentdb.com/api.php?encode=base64';
-
-  let query = new Object;
-  query.amount = document.querySelector('#num-of-questions').value;
-  query.category = document.querySelector('#categories').value;
-  query.difficulty = document.querySelector('#difficulties').value;
-  query.type = document.querySelector('#question-type').value;
 
 
-  Object.entries(query).forEach(option => {
-    if (option[1] !== '') {
-      url += '&' + option[0] + '=' + option[1];
-    }
-  });
 
-  let encodedQuestions = fetchAndParseQuestions(url);
-  let decodedQuestions = decodeBase64(encodedQuestions);
-
-}
-
-function fetchAndParseQuestions(url) {
-  let encodedQuestions = fetch(url).then(response => {
-    return response.json();
-  }).then(data => {
-    return data;
-  });
-  // .catch(err => {
-  //   console.warn('something went wrong. ' + err);
-  // });
-  console.log(encodedQuestions);
-  return encodedQuestions.results;
-}
 
 
