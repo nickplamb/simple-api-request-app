@@ -37,7 +37,7 @@ let triviaRound = (function(){
         return false;
       }
     }
-    // All passes?
+    // All passes!
     return true;
   }
 
@@ -56,7 +56,7 @@ let triviaRound = (function(){
       });
       addCategoriesToDropDown();
     }).catch(e => {
-      console.log(e)
+      console.error(e)
     })
   }
 
@@ -82,6 +82,7 @@ let triviaRound = (function(){
     query.difficulty = document.querySelector('#difficulties').value;
     query.type = document.querySelector('#question-type').value;
 
+    // Add the selected options to query string
     Object.entries(query).forEach(option => {
       if (option[1] !== '') {
         url += '&' + option[0] + '=' + option[1];
@@ -108,7 +109,7 @@ let triviaRound = (function(){
             add(question);
           });
         } else {
-          console.log('Too Specific');
+          console.error('Too Specific');
           // Display error message to user:
           // 'There are no ${difficulty} ${questionType} questions in ${category}'
           // with logic to determine which options were selected and taylor response.
@@ -187,6 +188,8 @@ let triviaRound = (function(){
     cardInner.appendChild(cardFront);
     cardInner.appendChild(cardBack);
 
+    // array to allow me to randomize order of answers
+    let answerArr = [];
 
     // Loop through possible answers, create li with button for each
     // Add each li to .answer-list ul
@@ -205,37 +208,43 @@ let triviaRound = (function(){
       answerbtn.value = answerIndex+1;
 
       // Create event handler for each button
-      createEventHandler(btnId, possibleAnswer);
+      createEventHandler(btnId);
 
       // add button to li
       answerListItem.appendChild(answerbtn);
       // add li to anser list ul
-      answerList.appendChild(answerListItem);
+      answerArr.push(answerListItem);
     });
 
-    function createEventHandler(btnId, possibleAnswer) {
+    shuffleArray(answerArr)
+    answerArr.forEach(item => {
+      answerList.appendChild(item);
+    });
+    
+
+    function createEventHandler(btnId) {
       let parentCard = document.querySelector('.card-container')
 
       if (parentCard.addEventListener) {
-        parentCard.addEventListener('click', e => handler(e, btnId, question, possibleAnswer), false);
+        parentCard.addEventListener('click', e => handler(e, btnId), false);
       }else if (parentCard.attachEvent) {
         parentCard.attachEvent('onclick', e => handler(e, btnId));
       }
     }
 
-    function handler(e, btnId, question, possibleAnswer) {
+    function handler(e, btnId) {
       e.preventDefault();
-      // I think this isolates the handler to just the one clocked.
+      // each handler is a seperate instance.
       if (e.target.id == btnId) { //http://jsfiddle.net/H97WY/
         let buttonSelected = document.querySelector('#'+btnId)
         let answerSelected = buttonSelected.innerText
         let questionNumber = btnId.split('-')[1];
 
-        createCardBack(answerSelected, questionNumber);
+        createCardBack(answerSelected);
       }
     }
 
-    function createCardBack(answerSelected, questionNumber) {
+    function createCardBack(answerSelected) {
       let cardBackHeader = document.createElement('h3');
       // cardBackHeader.classList.add('');
 
@@ -262,6 +271,17 @@ let triviaRound = (function(){
     loadCategories: loadCategories
   };
 })();
+
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
+}
 
 triviaRound.loadCategories();
 
