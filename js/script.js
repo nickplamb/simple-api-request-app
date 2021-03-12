@@ -208,7 +208,7 @@ let triviaRound = (function(){
       answerbtn.value = answerIndex+1;
 
       // Create event handler for each button
-      createEventHandler(btnId);
+      createAnswerEventHandler(btnId);
 
       // add button to li
       answerListItem.appendChild(answerbtn);
@@ -220,25 +220,23 @@ let triviaRound = (function(){
     answerArr.forEach(item => {
       answerList.appendChild(item);
     });
-    
 
-    function createEventHandler(btnId) {
+    function createAnswerEventHandler(btnId) {
       let parentCard = document.querySelector('.card-container')
 
       if (parentCard.addEventListener) {
-        parentCard.addEventListener('click', e => handler(e, btnId), false);
+        parentCard.addEventListener('click', e => answerHandler(e, btnId), false);
       }else if (parentCard.attachEvent) {
-        parentCard.attachEvent('onclick', e => handler(e, btnId));
+        parentCard.attachEvent('onclick', e => answerHandler(e, btnId));
       }
     }
 
-    function handler(e, btnId) {
+    function answerHandler(e, btnId) {
       e.preventDefault();
       // each handler is a seperate instance.
       if (e.target.id == btnId) { //http://jsfiddle.net/H97WY/
         let buttonSelected = document.querySelector('#'+btnId)
         let answerSelected = buttonSelected.innerText
-        let questionNumber = btnId.split('-')[1];
 
         createCardBack(answerSelected);
       }
@@ -286,5 +284,9 @@ function shuffleArray(array) {
 triviaRound.loadCategories();
 
 // -------Event listeners-----
-let optionsBtn = document.querySelector('button.start-form__item');
-optionsBtn.addEventListener('click', triviaRound.loadQuestions);
+let startForm = document.querySelector('#form');
+startForm.addEventListener('submit', triviaRound.loadQuestions);
+
+
+//commit msg
+// make event handler function names more specific
