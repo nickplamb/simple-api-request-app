@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Normalize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha512-NhSC1YmyruXifcj/KFRWoC561YpHpc5Jtzgvbuzx5VozKpWvQ+4nXhPdFgmx8xqexRcpAglTj9sIBWINXa8x5w==" crossorigin="anonymous" />
+
+  <!-- stylesheet -->
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+
+  <title>Register an Account</title>
+</head>
+<body>
+  <header>
+    <h1>Trivia!</h1>
+    <nav>
+      <ul>
+        <li><a href="Index.html">Home</a></li>
+        <li><a href="register.html">Register an Account</a></li>
+        <li></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section class="start-form card">
+      <h2>Register an Account</h2>
+      <form id='register-form'>
+  
+        <div class='input-wrapper'>
+          <label for='email' class="start-form__item">E-mail</label>
+          <input id='email' class="start-form__item">
+        </div>
+        
+        <div class='input-wrapper'>
+          <label for='password' class="start-form__item">Password</label>
+          <input id='password' type='password' class="start-form__item">
+        </div>
+        
+        
+        <button class="start-form__item">Register</button>
+        
+      </form>
+    </section>
+  </main>
+    <script src="js/register-script.js"></script>
+  </body>
+</html>

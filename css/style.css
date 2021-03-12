@@ -96,7 +96,8 @@ main {
   margin: 5px auto;
 }
 
-select.start-form__item {
+select.start-form__item,
+input.start-form__item {
   width: 100%;
   height: 40px;
   border-radius: 10px;
@@ -115,7 +116,8 @@ button {
   color: var(--bg-color);
 }
 
-select {
+select,
+input {
  color: var(--text-color); 
 }
 
@@ -159,7 +161,8 @@ button.start-form__item {
 .flip-over {
   transform: rotateY(180deg);
 }
-.card-front, .card-back {
+.card-front,
+.card-back {
   position: absolute;
   width: 100%;
   height: 100%;

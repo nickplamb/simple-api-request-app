@@ -286,7 +286,3 @@ triviaRound.loadCategories();
 // -------Event listeners-----
 let startForm = document.querySelector('#form');
 startForm.addEventListener('submit', triviaRound.loadQuestions);
-
-
-//commit msg
-// make event handler function names more specific
