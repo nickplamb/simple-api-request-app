@@ -28,10 +28,12 @@ let triviaRound = (function(){
       'That was a no brainer.',
     ]
   }
+
   // Retrieve all Questions for this round.
   function getAll() {
     return triviaQuestions;
   }
+
   // Add a new questions to this round.
   function add(newQuestion) {
     if (typeof newQuestion === 'object') {
@@ -44,6 +46,7 @@ let triviaRound = (function(){
       console.error('Not an object');
     }
   }
+
   // Function to compare the array of keys in new question to array to required keys
   function compareArrays(arr1, template) {
     // Compare lengths
@@ -143,19 +146,6 @@ let triviaRound = (function(){
       })
   }
 
-  // Response is base64 encoded for special character, decode base64
-  function decodeBase64(msg) {
-    if (typeof msg === 'object') {
-      let msgArr = [];
-      msg.forEach(item => {
-        msgArr.push(atob(item));
-      });
-      return msgArr;
-    } else {
-      return atob(msg);
-    }
-  }
-
   // Grab question array and loop through, sending each to addListItem func. for html creation
   function displayQuestions() {
     // Grab all questions
@@ -185,6 +175,7 @@ let triviaRound = (function(){
     // Card inner
     let cardInner = document.createElement('div');
     cardInner.classList.add('card-inner', 'card');
+    // div used to caluclate the height of the combined content of the card to determine card height
     let heightCalcDiv = document.createElement('div');
     // card front. Shows question with list of answers
     let cardFront = document.createElement('div');
@@ -211,11 +202,6 @@ let triviaRound = (function(){
     heightCalcDiv.appendChild(cardFrontHeader);
     heightCalcDiv.appendChild(cardQuestion);
     heightCalcDiv.appendChild(answerList);
-    
-    // Fill card Front
-    // cardFront.appendChild(cardFrontHeader);
-    // cardFront.appendChild(cardQuestion);
-    // cardFront.appendChild(answerList);
 
     cardInner.appendChild(cardFront);
     cardInner.appendChild(cardBack);
@@ -240,6 +226,7 @@ let triviaRound = (function(){
       answerbtn.value = answerIndex+1;
 
       // Create event handler for each button
+      // This event handler will call the function to create the back of the card.
       createAnswerEventHandler(btnId, numOfQuestions);
 
       // add button to li
@@ -248,7 +235,7 @@ let triviaRound = (function(){
       answerArr.push(answerListItem);
     });
 
-    shuffleArray(answerArr)
+    shuffleArray(answerArr);
     answerArr.forEach(item => {
       answerList.appendChild(item);
     });
@@ -338,13 +325,27 @@ let triviaRound = (function(){
     // heightCalcDiv.style.visibility = '';
   }
 
+  // removes all cards, clears questions array, and resets score variable.
   function resetQuestions() {
     document.querySelectorAll('.card-container__card').forEach(element => element.remove());
     triviaQuestions = [];
     score = 0;
   }
 
-  // ----------Modal------------ 
+    // Response is base64 encoded for special character, decode base64
+  function decodeBase64(msg) {
+    if (typeof msg === 'object') {
+      let msgArr = [];
+      msg.forEach(item => {
+        msgArr.push(atob(item));
+      });
+      return msgArr;
+    } else {
+      return atob(msg);
+    }
+  }
+
+  // -------------Modal---------------- 
   function showModal(title, text) {
     let modalContainer = document.querySelector('#modal-container');
     
@@ -373,7 +374,7 @@ let triviaRound = (function(){
     modalContainer.classList.remove('is-visible');
   }
 
-  // ------------DIALOG MODAL--------------------
+  // ------------Dialog Modal--------------------
   function showDialog( title, text) {
     showModal(title, text);
   
@@ -382,11 +383,11 @@ let triviaRound = (function(){
     let modal = modalContainer.querySelector('.modal');
   
     let resetTrivia = document.createElement('button');
-    resetTrivia.classList.add('modal-confirm');
+    resetTrivia.classList.add('modal-reset', 'btn-modal');
     resetTrivia.innerText = 'Play Again?';
   
     let reviewTrivia = document.createElement('button');
-    reviewTrivia.classList.add('modal-cancel');
+    reviewTrivia.classList.add('modal-review', 'btn-modal');
     reviewTrivia.innerText = 'Review questions?';
   
     modal.appendChild(resetTrivia);

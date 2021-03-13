@@ -286,6 +286,10 @@ select:focus {
   display: block;
 } */
 
+.btn-modal {
+  margin: 15px 0;
+}
+
 .modal h1 {
   margin-top: 0;
 }
