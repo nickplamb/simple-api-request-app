@@ -287,18 +287,28 @@ let triviaRound = (function(){
       cardBack.appendChild(cardBackHeader);
 
       if (questionIndex + 1 === numOfQuestions) {
-        console.log('i got in.')
-        let totalScoreElement = document.createElement('p');
+        // let totalScoreElement = document.createElement('p');
+        let title = '';
+        let text = '';
         if (score === 0) {
-          totalScoreElement.innerText = 'You are not very good at this. You didn\'t get any correct.';
+          title = 'You are not very good at this.';
+          text = 'You didn\'t get any correct.';
+          // totalScoreElement.innerText = 'You are not very good at this. You didn\'t get any correct.';
         } else if (score <= numOfQuestions * 0.6){
-          totalScoreElement.innerText = 'You gave it your best shot. You only got ' + score + ' out of ' + numOfQuestions + '.';
+          title = 'Was that the best you could do?';
+          text = 'You only got ' + score + ' out of ' + numOfQuestions + '.';
+          // totalScoreElement.innerText = 'You gave it your best shot. You only got ' + score + ' out of ' + numOfQuestions + '.';
         } else if (score === numOfQuestions) {
-          totalScoreElement.innerText = 'Ok, maybe you are pretty smart. You got a perfect score!';
+          title = 'Ok, maybe you are pretty smart.';
+          text = 'You got a perfect score!';
+          // totalScoreElement.innerText = 'Ok, maybe you are pretty smart. You got a perfect score!';
         } else {
-          totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
+          title = 'You did pretty well!';
+          text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
+          // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
         }
-        cardBack.appendChild(totalScoreElement);
+        showModal(title, text);
+        // cardBack.appendChild(totalScoreElement);
       }
 
       cardInner.classList.add('flip-over');
@@ -321,59 +331,54 @@ let triviaRound = (function(){
   }
 
   // ----------Modal------------ 
-  // function showModal(title, text) {
-  //   let modalContainer = document.querySelector('#modal-container');
+  function showModal(title, text) {
+    let modalContainer = document.querySelector('#modal-container');
     
-  //   // Clear all existing modal content
-  //   modalContainer.innerHTML = '';
+    // Clear all existing modal content
+    modalContainer.innerHTML = '';
   
-  //   let modal = document.createElement('div');
-  //   modal.classList.add('modal');
+    let modal = document.createElement('div');
+    modal.classList.add('modal');
   
-  //   // Add the new modal content
-  //   let closeButtonElement = document.createElement('button');
-  //   closeButtonElement.classList.add('modal-close');
-  //   closeButtonElement.innerText = 'close';
-  //   closeButtonElement.addEventListener('click', () => hideModal());
+    // Add the new modal content
+    let closeButtonElement = document.createElement('button');
+    closeButtonElement.classList.add('modal-close');
+    closeButtonElement.innerText = 'close';
+    closeButtonElement.addEventListener('click', () => hideModal());
+
+    let titleElement = document.createElement('h1');
+    titleElement.innerText = title;
+
+    let contentElement = document.createElement('p');
+    contentElement.innerText = text;
+
+    modal.appendChild(closeButtonElement);
+    modal.appendChild(titleElement);
+    modal.appendChild(contentElement);
+    modalContainer.appendChild(modal);
+
+    modalContainer.classList.add('is-visible');
+  }
+
+  function hideModal() {
+    let modalContainer = document.querySelector('#modal-container');
+    modalContainer.classList.remove('is-visible');
+  }
+
+  window.addEventListener('keydown', e => {
+    let modalContainer = document.querySelector('#modal-container');
+    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+      hideModal();
+    }
+  });
   
-  //   let titleElement = document.createElement('h1');
-  //   titleElement.innerText = title;
-  
-  //   let contentElement = document.createElement('p');
-  //   contentElement.innerText = text;
-  
-  //   modal.appendChild(closeButtonElement);
-  //   modal.appendChild(titleElement);
-  //   modal.appendChild(contentElement);
-  //   modalContainer.appendChild(modal);
-  
-  //   modalContainer.classList.add('is-visible');
-  // }
-  
-  // function hideModal() {
-  //   let modalContainer = document.querySelector('#modal-container');
-  //   modalContainer.classList.remove('is-visible');
-  // }
-  
-  // document.querySelector('#show-modal').addEventListener('click', () => {
-  //   showModal('Modal title', 'This is the modal content!');
-  // });
-  
-  // window.addEventListener('keydown', e => {
-  //   let modalContainer = document.querySelector('#modal-container');
-  //   if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-  //     hideModal();
-  //   }
-  // });
-  
-  // window.addEventListener('click', e => {
-  //   let modalContainer = document.querySelector('#modal-container');
-    
-  //   let target = e.target;
-  //   if (target === modalContainer) {
-  //     hideModal();
-  //   }
-  // }); 
+  window.addEventListener('click', e => {
+    let modalContainer = document.querySelector('#modal-container');
+    let target = e.target;
+    if (target === modalContainer) {
+      hideModal();
+    }
+  }); 
 
 
   // Return object with call to available functions
