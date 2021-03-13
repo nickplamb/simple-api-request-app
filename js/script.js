@@ -94,6 +94,9 @@ let triviaRound = (function(){
   // Build query string from start form. call fetchQuestions func. to make request.
   function loadQuestions(e) {
     e.preventDefault();
+
+    resetQuestions();
+
     let url = apiBaseUrl;
 
     let query = new Object;
@@ -274,7 +277,11 @@ let triviaRound = (function(){
 
     function createCardBack(answerSelected, numOfQuestions) {
       let cardBackHeader = document.createElement('h3');
-      // cardBackHeader.classList.add('');
+      let cardBackQuestion = document.createElement('p');
+      let cardBackAnswer = document.createElement('p');
+
+      cardBackQuestion.innerText = question.question;
+      cardBackAnswer.innerText = question.correct_answer;
 
       // Determine if the answer selected is correct.
       if (answerSelected === question.correct_answer) {
@@ -285,6 +292,8 @@ let triviaRound = (function(){
       }
 
       cardBack.appendChild(cardBackHeader);
+      cardBack.appendChild(cardBackQuestion);
+      cardBack.appendChild(cardBackAnswer);
 
       if (questionIndex + 1 === numOfQuestions) {
         // let totalScoreElement = document.createElement('p');
@@ -307,8 +316,7 @@ let triviaRound = (function(){
           text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
           // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
         }
-        showModal(title, text);
-        // cardBack.appendChild(totalScoreElement);
+        showDialog(title, text);
       }
 
       cardInner.classList.add('flip-over');
@@ -330,6 +338,12 @@ let triviaRound = (function(){
     // heightCalcDiv.style.visibility = '';
   }
 
+  function resetQuestions() {
+    document.querySelectorAll('.card-container__card').forEach(element => element.remove());
+    triviaQuestions = [];
+    score = 0;
+  }
+
   // ----------Modal------------ 
   function showModal(title, text) {
     let modalContainer = document.querySelector('#modal-container');
@@ -339,12 +353,6 @@ let triviaRound = (function(){
   
     let modal = document.createElement('div');
     modal.classList.add('modal');
-  
-    // Add the new modal content
-    let closeButtonElement = document.createElement('button');
-    closeButtonElement.classList.add('modal-close');
-    closeButtonElement.innerText = 'close';
-    closeButtonElement.addEventListener('click', () => hideModal());
 
     let titleElement = document.createElement('h1');
     titleElement.innerText = title;
@@ -352,7 +360,7 @@ let triviaRound = (function(){
     let contentElement = document.createElement('p');
     contentElement.innerText = text;
 
-    modal.appendChild(closeButtonElement);
+    // modal.appendChild(closeButtonElement);
     modal.appendChild(titleElement);
     modal.appendChild(contentElement);
     modalContainer.appendChild(modal);
@@ -363,6 +371,34 @@ let triviaRound = (function(){
   function hideModal() {
     let modalContainer = document.querySelector('#modal-container');
     modalContainer.classList.remove('is-visible');
+  }
+
+  // ------------DIALOG MODAL--------------------
+  function showDialog( title, text) {
+    showModal(title, text);
+  
+    let modalContainer = document.querySelector('#modal-container');
+  
+    let modal = modalContainer.querySelector('.modal');
+  
+    let resetTrivia = document.createElement('button');
+    resetTrivia.classList.add('modal-confirm');
+    resetTrivia.innerText = 'Play Again?';
+  
+    let reviewTrivia = document.createElement('button');
+    reviewTrivia.classList.add('modal-cancel');
+    reviewTrivia.innerText = 'Review questions?';
+  
+    modal.appendChild(resetTrivia);
+    modal.appendChild(reviewTrivia);
+  
+    resetTrivia.focus();
+
+    reviewTrivia.addEventListener('click', hideModal);
+    resetTrivia.addEventListener('click', () => {
+      resetQuestions();
+      hideModal();
+    });
   }
 
   window.addEventListener('keydown', e => {
@@ -387,7 +423,8 @@ let triviaRound = (function(){
     getAll: getAll,
     addListItem: addListItem,
     loadQuestions: loadQuestions,
-    loadCategories: loadCategories
+    loadCategories: loadCategories,
+    resetQuestions: resetQuestions
   };
 })();
 
@@ -406,4 +443,7 @@ triviaRound.loadCategories();
 
 // -------Event listeners-----
 let startForm = document.querySelector('#form');
-startForm.addEventListener('submit', triviaRound.loadQuestions);
+startForm.addEventListener('submit', (e) => {
+  triviaRound.resetQuestions();
+  triviaRound.loadQuestions(e);
+});
