@@ -81,7 +81,7 @@ header nav {
 main {
   max-width: 680px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 25px;
 }
 
 .start-form {
@@ -94,13 +94,13 @@ main {
 .start-form__item {
   display: block;
   margin: 5px auto;
+  width: 100%;
+  border-radius: 10px;
 }
 
-select.start-form__item,
-input.start-form__item {
-  width: 100%;
+select{
   height: 40px;
-  border-radius: 10px;
+  color: var(--text-color); 
 }
 
 section h2 {
@@ -109,16 +109,6 @@ section h2 {
 
 form {
   padding: 0 40px;
-}
-
-button {
-  cursor: pointer;
-  color: var(--bg-color);
-}
-
-select,
-input {
- color: var(--text-color); 
 }
 
 button.start-form__item {
@@ -133,7 +123,7 @@ button.start-form__item {
 .card-container__card,
 .start-form {
   max-width: 600px;
-  margin: 25px auto;
+  margin: 20px auto;
   padding: 20px 0;
   background-color: var(--cards-bg-color);
 }
@@ -149,7 +139,10 @@ button.start-form__item {
   background-color: transparent;
   perspective: 1000px;
   height: 400px;
+  min-height: 100%;
+  max-height: 100%;
 }
+
 .card-inner {
   position: relative;
   width: 100%;
@@ -158,9 +151,11 @@ button.start-form__item {
   transition: transform 0.6s;
   transform-style: preserve-3d;
 }
+
 .flip-over {
   transform: rotateY(180deg);
 }
+
 .card-front,
 .card-back {
   position: absolute;
@@ -172,9 +167,11 @@ button.start-form__item {
   border: none;
   border-radius: 20px;
 }
+
 .card-front {
   background-color: var(--cards-bg-color);
 }
+
 .card-back {
   background-color: var(--cards-bg-color);
   transform: rotateY(180deg);
@@ -186,7 +183,8 @@ ul {
 }
 
 ul.answer-list {
-  width: 230px;
+  width: 100%;
+  max-width: 500px;
   list-style: none;
   margin: 10px auto;
 }
@@ -199,11 +197,12 @@ li {
 
 
 /* ---------------------BUTTONS------------------------- */
-.btn-answer,
-button.start-form__item {
+button {
+  cursor: pointer;
+  color: var(--bg-color);
   width: 100%;
   max-height: 230px;
-  padding: 10px;
+  padding: 10px 20px;
   background-color: var(--btn-bg-color);
   border: none;
   border-radius: 15px;
@@ -214,14 +213,12 @@ button.start-form__item {
   text-align: left;
 }
 
-.btn-answer:hover,
-button.start-form__item:hover {
+button:hover {
   background-color: var(--btn-bg-hover);
   border: none;
 }
 
-.btn-answer:focus,
-button.start-form__item:focus,
+button:focus,
 select:focus {
   outline: none;
   box-shadow: 2px 2px 5px var(--btn-bg-hover);
@@ -262,5 +259,38 @@ select:focus {
 
 #modal-container.is-visible {
   display: block;
+
 }
 
+.modal {
+  margin: auto;
+  display: inline-block;
+  box-sizing: border-box;
+  background: #fff;
+  padding: 50px;
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+  border-radius: 15px;
+  max-width: 600px;
+  background-color: var(--cards-bg-color);
+}
+
+/* .modal-close {
+  float: right;
+  -webkit-appearance: none;
+  border: 0;
+  background: none;
+  color: #777;
+  text-decoration: underline;
+  display: block;
+} */
+
+.modal h1 {
+  margin-top: 0;
+}
+
+.modal p {
+  margin-bottom: 0;
+  margin-bottom: 10px;
+}

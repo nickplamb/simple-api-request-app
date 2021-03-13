@@ -140,13 +140,15 @@ let triviaRound = (function(){
 
     // Loop through each question in the round
     allQuestions.forEach((question, index) => {
-      let cardContainer = document.querySelector('.card-container');
-      cardContainer.appendChild(addListItem(question, index));
+      addListItem(question, index);
     });
   }
 
   // Creates a div.card-container__card with the question and a ul of buttons as answers.
   function addListItem(question, questionIndex) {
+    let cardContainer = document.querySelector('.card-container');
+
+    // Combine the correct answer and incorrect answers into new array
     let possibleAnswers = question.incorrect_answers.slice();
     possibleAnswers.push(question.correct_answer);
     
@@ -159,6 +161,7 @@ let triviaRound = (function(){
     // Card inner
     let cardInner = document.createElement('div');
     cardInner.classList.add('card-inner', 'card');
+    let heightCalcDiv = document.createElement('div');
     // card front. Shows question with list of answers
     let cardFront = document.createElement('div');
     cardFront.classList.add('card-front');
@@ -181,9 +184,14 @@ let triviaRound = (function(){
     card.appendChild(cardInner);
 
     // Fill card Front
-    cardFront.appendChild(cardFrontHeader);
-    cardFront.appendChild(cardQuestion);
-    cardFront.appendChild(answerList);
+    heightCalcDiv.appendChild(cardFrontHeader);
+    heightCalcDiv.appendChild(cardQuestion);
+    heightCalcDiv.appendChild(answerList);
+    
+    // Fill card Front
+    // cardFront.appendChild(cardFrontHeader);
+    // cardFront.appendChild(cardQuestion);
+    // cardFront.appendChild(answerList);
 
     cardInner.appendChild(cardFront);
     cardInner.appendChild(cardBack);
@@ -234,7 +242,8 @@ let triviaRound = (function(){
     function answerHandler(e, btnId) {
       e.preventDefault();
       // each handler is a seperate instance.
-      if (e.target.id == btnId) { //http://jsfiddle.net/H97WY/
+      //http://jsfiddle.net/H97WY/
+      if (e.target.id == btnId) { 
         let buttonSelected = document.querySelector('#'+btnId)
         let answerSelected = buttonSelected.innerText
 
@@ -257,8 +266,77 @@ let triviaRound = (function(){
       cardInner.classList.add('flip-over');
     }
 
-    return card;
+    // Card front must be set to position:absolute for card flip to work.
+    // This causes long questions/answers to extend beyond the bottom of card 
+    // on narrow screens.
+    // This calculation places the content then measures the height of heightCalcDiv
+    // and resizes the height of the card accordingly.
+    // https://stackoverflow.com/a/5944059/15158461
+    cardFront.appendChild(heightCalcDiv);
+    // heightCalcDiv.style.visibility = 'hidden';
+    cardContainer.appendChild(card);
+    let contentHeight = parseInt(window.getComputedStyle(heightCalcDiv).height);
+    if (contentHeight > 315) {
+      card.style.height = (contentHeight + 110) + 'px';
+    }
+    // heightCalcDiv.style.visibility = '';
   }
+
+  // ----------Modal------------ 
+  // function showModal(title, text) {
+  //   let modalContainer = document.querySelector('#modal-container');
+    
+  //   // Clear all existing modal content
+  //   modalContainer.innerHTML = '';
+  
+  //   let modal = document.createElement('div');
+  //   modal.classList.add('modal');
+  
+  //   // Add the new modal content
+  //   let closeButtonElement = document.createElement('button');
+  //   closeButtonElement.classList.add('modal-close');
+  //   closeButtonElement.innerText = 'close';
+  //   closeButtonElement.addEventListener('click', () => hideModal());
+  
+  //   let titleElement = document.createElement('h1');
+  //   titleElement.innerText = title;
+  
+  //   let contentElement = document.createElement('p');
+  //   contentElement.innerText = text;
+  
+  //   modal.appendChild(closeButtonElement);
+  //   modal.appendChild(titleElement);
+  //   modal.appendChild(contentElement);
+  //   modalContainer.appendChild(modal);
+  
+  //   modalContainer.classList.add('is-visible');
+  // }
+  
+  // function hideModal() {
+  //   let modalContainer = document.querySelector('#modal-container');
+  //   modalContainer.classList.remove('is-visible');
+  // }
+  
+  // document.querySelector('#show-modal').addEventListener('click', () => {
+  //   showModal('Modal title', 'This is the modal content!');
+  // });
+  
+  // window.addEventListener('keydown', e => {
+  //   let modalContainer = document.querySelector('#modal-container');
+  //   if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
+  //     hideModal();
+  //   }
+  // });
+  
+  // window.addEventListener('click', e => {
+  //   let modalContainer = document.querySelector('#modal-container');
+    
+  //   let target = e.target;
+  //   if (target === modalContainer) {
+  //     hideModal();
+  //   }
+  // }); 
+
 
   // Return object with call to available functions
   return {
