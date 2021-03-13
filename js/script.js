@@ -2,13 +2,32 @@ let triviaRound = (function(){
 
   // Array of question objects with answers.
   let triviaQuestions = [];
-
   let allCategories = [];
+  let score = 0;
 
   let apiBaseUrl = 'https://opentdb.com/api.php?encode=base64';
   // Array of required properties for each question
-  let questionObjectTemplate = ['category', 'type', 'difficulty', 'question', 'correct_answer', 'incorrect_answers']
-
+  const questionObjectTemplate = ['category', 'type', 'difficulty', 'question', 'correct_answer', 'incorrect_answers']
+  const snarkyResponses = {
+    correct: [
+      'Correct! Looks like you are a pretty good guesser.',
+      'Correct! but that was an easy one...',
+      'correct... Finally!',
+      'Correct! You might just be smarter then a child.',
+      'Correct! You had a 50/50 chance though.',
+      'Correct. Everyone knows that though.',
+      'Guessing, 50% of the time it works every time.'
+    ],
+    incorrect: [
+      'So close...(not really.)',
+      'Come one, that was an easy one.',
+      'How could you have gotten that one wrong. It was so easy.',
+      'Come on, that was obvious.',
+      'Do you have a hard time remembering to breath?',
+      'My dog knew that one...',
+      'That was a no brainer.',
+    ]
+  }
   // Retrieve all Questions for this round.
   function getAll() {
     return triviaQuestions;
@@ -60,6 +79,7 @@ let triviaRound = (function(){
     })
   }
 
+  // Populate dropdown for categories.
   function addCategoriesToDropDown() {
     let dropDown = document.querySelector('#categories');
     allCategories.forEach(item => {
@@ -137,15 +157,16 @@ let triviaRound = (function(){
   function displayQuestions() {
     // Grab all questions
     let allQuestions = getAll();
+    let numOfQuestions = allQuestions.length;
 
     // Loop through each question in the round
     allQuestions.forEach((question, index) => {
-      addListItem(question, index);
+      addListItem(question, index, numOfQuestions);
     });
   }
 
   // Creates a div.card-container__card with the question and a ul of buttons as answers.
-  function addListItem(question, questionIndex) {
+  function addListItem(question, questionIndex, numOfQuestions) {
     let cardContainer = document.querySelector('.card-container');
 
     // Combine the correct answer and incorrect answers into new array
@@ -216,7 +237,7 @@ let triviaRound = (function(){
       answerbtn.value = answerIndex+1;
 
       // Create event handler for each button
-      createAnswerEventHandler(btnId);
+      createAnswerEventHandler(btnId, numOfQuestions);
 
       // add button to li
       answerListItem.appendChild(answerbtn);
@@ -229,17 +250,17 @@ let triviaRound = (function(){
       answerList.appendChild(item);
     });
 
-    function createAnswerEventHandler(btnId) {
+    function createAnswerEventHandler(btnId, numOfQuestions) {
       let parentCard = document.querySelector('.card-container')
 
       if (parentCard.addEventListener) {
-        parentCard.addEventListener('click', e => answerHandler(e, btnId), false);
+        parentCard.addEventListener('click', e => answerHandler(e, btnId, numOfQuestions), false);
       }else if (parentCard.attachEvent) {
-        parentCard.attachEvent('onclick', e => answerHandler(e, btnId));
+        parentCard.attachEvent('onclick', e => answerHandler(e, btnId, numOfQuestions));
       }
     }
 
-    function answerHandler(e, btnId) {
+    function answerHandler(e, btnId, numOfQuestions) {
       e.preventDefault();
       // each handler is a seperate instance.
       //http://jsfiddle.net/H97WY/
@@ -247,22 +268,39 @@ let triviaRound = (function(){
         let buttonSelected = document.querySelector('#'+btnId)
         let answerSelected = buttonSelected.innerText
 
-        createCardBack(answerSelected);
+        createCardBack(answerSelected, numOfQuestions);
       }
     }
 
-    function createCardBack(answerSelected) {
+    function createCardBack(answerSelected, numOfQuestions) {
       let cardBackHeader = document.createElement('h3');
       // cardBackHeader.classList.add('');
 
       // Determine if the answer selected is correct.
       if (answerSelected === question.correct_answer) {
-        cardBackHeader.innerText = 'You are so smart!'
+        score += 1;
+        cardBackHeader.innerText = 'Correct!'
       } else {
-        cardBackHeader.innerText = 'Isn\'t that cute. BUT IT\'S WRONG!'
+        cardBackHeader.innerText = 'WRONG! The correct answer is ' + question.correct_answer + '.'
       }
-      
+
       cardBack.appendChild(cardBackHeader);
+
+      if (questionIndex + 1 === numOfQuestions) {
+        console.log('i got in.')
+        let totalScoreElement = document.createElement('p');
+        if (score === 0) {
+          totalScoreElement.innerText = 'You are not very good at this. You didn\'t get any correct.';
+        } else if (score <= numOfQuestions * 0.6){
+          totalScoreElement.innerText = 'You gave it your best shot. You only got ' + score + ' out of ' + numOfQuestions + '.';
+        } else if (score === numOfQuestions) {
+          totalScoreElement.innerText = 'Ok, maybe you are pretty smart. You got a perfect score!';
+        } else {
+          totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
+        }
+        cardBack.appendChild(totalScoreElement);
+      }
+
       cardInner.classList.add('flip-over');
     }
 
