@@ -266,6 +266,8 @@ let triviaRound = (function(){
       let cardBackHeader = document.createElement('h3');
       let cardBackQuestion = document.createElement('p');
       let cardBackAnswer = document.createElement('p');
+      let cardBackImg = document.createElement('img');
+      cardBackImg.classList.add('answer-icon');
 
       cardBackQuestion.innerText = question.question;
       cardBackAnswer.innerText = question.correct_answer;
@@ -273,14 +275,17 @@ let triviaRound = (function(){
       // Determine if the answer selected is correct.
       if (answerSelected === question.correct_answer) {
         score += 1;
-        cardBackHeader.innerText = 'Correct!'
+        cardBackImg.src = 'img/correct_icon.svg';
+        cardBackHeader.innerText = 'Correct!';
       } else {
-        cardBackHeader.innerText = 'WRONG! The correct answer is ' + question.correct_answer + '.'
+        cardBackImg.src = 'img/wrong_icon.svg';
+        cardBackHeader.innerText = 'Wrong!';
       }
 
       cardBack.appendChild(cardBackHeader);
       cardBack.appendChild(cardBackQuestion);
       cardBack.appendChild(cardBackAnswer);
+      cardBack.appendChild(cardBackImg);
 
       if (questionIndex + 1 === numOfQuestions) {
         // let totalScoreElement = document.createElement('p');

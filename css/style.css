@@ -298,3 +298,10 @@ select:focus {
   margin-bottom: 0;
   margin-bottom: 10px;
 }
+
+img.answer-icon {
+  width: 150px;
+  display: block;
+  margin: 10px auto;
+  padding-top: 20px;
+}
