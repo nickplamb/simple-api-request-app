@@ -4,6 +4,8 @@ let triviaRound = (function(){
   let triviaQuestions = [];
   let allCategories = [];
   let score = 0;
+  // This is the number of questions answered in this round.
+  let questionsAnswered = 0;
 
   let apiBaseUrl = 'https://opentdb.com/api.php?encode=base64';
   // Array of required properties for each question
@@ -287,7 +289,12 @@ let triviaRound = (function(){
       cardBack.appendChild(cardBackAnswer);
       cardBack.appendChild(cardBackImg);
 
-      if (questionIndex + 1 === numOfQuestions) {
+      // This is the number of questions answered in this round.
+      ++questionsAnswered;
+      console.log(questionsAnswered);
+      console.log(numOfQuestions);
+
+      if (questionsAnswered === numOfQuestions) {
         // let totalScoreElement = document.createElement('p');
         let title = '';
         let text = '';
@@ -339,6 +346,7 @@ let triviaRound = (function(){
     document.querySelectorAll('.card-container__card').forEach(element => element.remove());
     triviaQuestions = [];
     score = 0;
+    questionsAnswered = 0;
   }
 
     // Response is base64 encoded for special character, decode base64
