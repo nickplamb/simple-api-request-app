@@ -303,7 +303,11 @@ let triviaRound = (function(){
           text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
           // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
         }
-        showDialog(title, text);
+
+
+        setTimeout(() => {
+          showDialog(title, text)
+        }, 2000);
       }
 
       cardInner.classList.add('flip-over');
