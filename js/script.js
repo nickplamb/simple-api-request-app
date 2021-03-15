@@ -229,7 +229,7 @@ let triviaRound = (function(){
 
       // Create event handler for each button
       // This event handler will call the function to create the back of the card.
-      createAnswerEventHandler(btnId, numOfQuestions);
+      createAnswerEventHandler(question, btnId, numOfQuestions);
 
       // add button to li
       answerListItem.appendChild(answerbtn);
@@ -242,38 +242,28 @@ let triviaRound = (function(){
       answerList.appendChild(item);
     });
 
-    function createAnswerEventHandler(btnId, numOfQuestions) {
+    function createAnswerEventHandler(question, btnId, numOfQuestions) {
       let parentCard = document.querySelector('.card-container')
 
       if (parentCard.addEventListener) {
-        parentCard.addEventListener('click', e => answerHandler(e, btnId, numOfQuestions), false);
+        parentCard.addEventListener('click', e => answerHandler(e, question, btnId, numOfQuestions), false);
       }else if (parentCard.attachEvent) {
-        parentCard.attachEvent('onclick', e => answerHandler(e, btnId, numOfQuestions));
+        parentCard.attachEvent('onclick', e => answerHandler(e, question, btnId, numOfQuestions));
       }
     }
 
-    function answerHandler(e, btnId, numOfQuestions) {
-      e.preventDefault();
-      // each handler is a seperate instance.
-      //http://jsfiddle.net/H97WY/
-      if (e.target.id == btnId) { 
-        let buttonSelected = document.querySelector('#'+btnId)
-        let answerSelected = buttonSelected.innerText
-
-        createCardBack(answerSelected, numOfQuestions);
-      }
-    }
-
-    function createCardBack(answerSelected, numOfQuestions) {
+    function createCardBack(question, answerSelected, numOfQuestions) {
+      // let cardInner = document.querySelector('.card-inner');
+      // let cardBack = document.querySelector('.card-back');
       let cardBackHeader = document.createElement('h3');
       let cardBackQuestion = document.createElement('p');
       let cardBackAnswer = document.createElement('p');
       let cardBackImg = document.createElement('img');
       cardBackImg.classList.add('answer-icon');
-
+  
       cardBackQuestion.innerText = question.question;
       cardBackAnswer.innerText = question.correct_answer;
-
+  
       // Determine if the answer selected is correct.
       if (answerSelected === question.correct_answer) {
         score += 1;
@@ -283,17 +273,17 @@ let triviaRound = (function(){
         cardBackImg.src = 'img/wrong_icon.svg';
         cardBackHeader.innerText = 'Wrong!';
       }
-
+  
       cardBack.appendChild(cardBackHeader);
       cardBack.appendChild(cardBackQuestion);
       cardBack.appendChild(cardBackAnswer);
       cardBack.appendChild(cardBackImg);
-
+  
       // This is the number of questions answered in this round.
-      ++questionsAnswered;
-      console.log(questionsAnswered);
-      console.log(numOfQuestions);
-
+      questionsAnswered++;
+      // console.log('questions answered ' + questionsAnswered);
+      // console.log('# of questions ' + numOfQuestions);
+  
       if (questionsAnswered === numOfQuestions) {
         // let totalScoreElement = document.createElement('p');
         let title = '';
@@ -315,21 +305,34 @@ let triviaRound = (function(){
           text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
           // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
         }
-
-
+  
+  
         setTimeout(() => {
           showDialog(title, text)
         }, 2000);
       }
-
+  
       cardInner.classList.add('flip-over');
     }
 
+    function answerHandler(e, question, btnId, numOfQuestions) {
+      e.preventDefault();
+  
+      // each handler is a seperate instance.
+      //http://jsfiddle.net/H97WY/
+      if (e.target.id == btnId) { 
+        // console.log('event fired:');
+        // console.log(e);
+        let buttonSelected = document.querySelector('#'+btnId)
+        let answerSelected = buttonSelected.innerText
+  
+        createCardBack(question, answerSelected, numOfQuestions);
+      }
+    }
+
     // Card front must be set to position:absolute for card flip to work.
-    // This causes long questions/answers to extend beyond the bottom of card 
-    // on narrow screens.
-    // This calculation places the content then measures the height of heightCalcDiv
-    // and resizes the height of the card accordingly.
+    // This causes long questions/answers to extend beyond the bottom of card on narrow screens.
+    // This calculation places the content then measures the height of heightCalcDiv and resizes the height of the card accordingly.
     // https://stackoverflow.com/a/5944059/15158461
     cardFront.appendChild(heightCalcDiv);
     // heightCalcDiv.style.visibility = 'hidden';
@@ -341,9 +344,17 @@ let triviaRound = (function(){
     // heightCalcDiv.style.visibility = '';
   }
 
+  // uses the cloneNode t
+  function removeAnswerListeners() {
+    let el  = document.querySelector('.card-container');
+    //https://stackoverflow.com/a/34693314/15158461
+    el.parentNode.replaceChild(el.cloneNode(true), el);
+  }
+
   // removes all cards, clears questions array, and resets score variable.
   function resetQuestions() {
     document.querySelectorAll('.card-container__card').forEach(element => element.remove());
+    removeAnswerListeners();
     triviaQuestions = [];
     score = 0;
     questionsAnswered = 0;
@@ -462,6 +473,6 @@ triviaRound.loadCategories();
 // -------Event listeners-----
 let startForm = document.querySelector('#form');
 startForm.addEventListener('submit', (e) => {
-  triviaRound.resetQuestions();
+  // triviaRound.resetQuestions();
   triviaRound.loadQuestions(e);
 });
