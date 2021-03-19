@@ -8,33 +8,113 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
   <link href="css/style.bootstrap.css" rel="stylesheet" type="text/css" />
+  <link href="css/custom.css" rel="stylesheet" type="text/css" />
+
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-sm navbar-light bg-warning fixed-top">
-    <a class="navbar-brand" href="#">Trivia!</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Home<span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Nick's Portfolio</a>
-        </li>
-        <!-- <li class="nav-item">
-          <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </li> -->
-      </ul>
+  <header>
+    <nav class="navbar navbar-expand-sm navbar-light bg-warning fixed-top">
+      <a class="navbar-brand" href="#">Trivia!</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Home<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Nick's Portfolio</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+          </li> -->
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main class="bg-white">
+    <div id="modal-container"></div>
+    <div class="row justify-content-center">
+      <div class="col-11 col-md-8 col-lg-6">
+        <h1 class="text-center my-4">Welcome to Nick's Trivia</h1>
+        <div class="card bg-light">
+          <div class="card-header text-center">
+            <h2 class="card-title">Select Your Options</h2>
+          </div>
+          <div class="card-body">
+            <form action="#" method="get">
+              <div class="form-group">
+                <label for="num-of-questions" class="">How Many Questions in this Round</label>
+                <select name="num-of-questions" id="num-of-questions" class="form-control">
+                  <!-- <option value="1">1</option> -->
+                  <option value="10">10</option>
+                  <option value="15">15</option>
+                  <option value="20">20</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="categories" class="">Select a Category</label>
+                <select name="categories" id="categories" class="form-control">
+                  <option value="">Any Category</option>
+                  <!-- Us JS to spit out the rest -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="difficulties" class="">Select a Difficulty</label>
+                <select name="difficulties" id="difficulties" class="form-control">
+                  <option value="">Any Difficulty</option>
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="question-type" class="">Select a Type of Question</label>
+                <select name="question-type" id="question-type" class="form-control">
+                  <option value="">Any Type</option>
+                  <option value="multiple">Multiple Choice</option>
+                  <option value="boolean">True or False</option>
+                </select>
+              </div>
+              <button type="submit" id="start-round" class="btn btn-warning btn-block">Lets Start!</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-  </nav>
-  <main class="bg-light">
-    <h1>Hello!</h1>
+    <div class="card-container row justify-content-center my-4">
+      <div class="col-11 col-md-8 col-lg-6 card-container__card">
+        <div class="card card-inner bg-light flip-over">
+          <div class="card-front card-body bg-light">
+            <div class="card-header bg-warning">
+              <h4 class="card-title text-center">Question 1</h4>
+              <p class="card-text">The film "2001: A Space Odyssey" was released on December 31st, 2000.</p>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
+              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
+              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
+              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
+            </div>
+          </div>
+          <div class="card-back card-body bg-light">
+            <div class="card-header bg-warning">
+              <h4 class="card-title text-center">Question 1</h4>
+              <p class="card-text">The film "2001: A Space Odyssey" was released on December 31st, 2000.</p>
+            </div>
+            <div class="mt-4">
+              <p class="card-text">This was the correct answer.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
 
   </main>
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
