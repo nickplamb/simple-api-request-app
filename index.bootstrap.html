@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
@@ -8,9 +7,7 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
   <link href="css/style.bootstrap.css" rel="stylesheet" type="text/css" />
-
 </head>
-
 <body>
   <header>
     <nav class="navbar navbar-expand-sm navbar-light bg-warning fixed-top">
@@ -27,7 +24,7 @@
             <a class="nav-link" href="#">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Nick's Portfolio</a>
+            <a class="nav-link" href="http://nickplamb.com">Nick's Portfolio</a>
           </li>
           <!-- <li class="nav-item">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
@@ -39,18 +36,18 @@
   <main class="bg-white">
     <div id="modal-container"></div>
     <div class="row justify-content-center">
-      <div class="col-11 col-md-8 col-lg-6">
+      <div class="col-11 col-sm-10 col-md-8 col-lg-7 col-xl-5">
         <h1 class="text-center my-4">Welcome to Nick's Trivia</h1>
         <div class="card bg-light">
           <div class="card-header text-center">
             <h2 class="card-title">Select Your Options</h2>
           </div>
           <div class="card-body">
-            <form action="#" method="get">
+            <form action="#" method="get" id="startForm">
               <div class="form-group">
                 <label for="num-of-questions" class="">How Many Questions in this Round</label>
                 <select name="num-of-questions" id="num-of-questions" class="form-control">
-                  <!-- <option value="1">1</option> -->
+                  <option value="1">1</option>
                   <option value="10">10</option>
                   <option value="15">15</option>
                   <option value="20">20</option>
@@ -86,35 +83,27 @@
         </div>
       </div>
     </div>
-    <div class="card-container row justify-content-center my-4">
-      <div class="col-11 col-md-8 col-lg-6 card-container__card">
-        <div class="card card-inner bg-light flip-over">
-          <div class="card-front card-body bg-light">
-            <div class="card-header bg-warning">
-              <h4 class="card-title text-center">Question 1</h4>
-              <p class="card-text">The film "2001: A Space Odyssey" was released on December 31st, 2000.</p>
-            </div>
-            <div class="mt-4">
-              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
-              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
-              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
-              <button class="btn btn-outline-warning btn-block text-dark mt-3">some answer</button>
-            </div>
+    <div class="my-2" id="card-container">
+    </div>
+
+    <div class="modal fade" id="endOfRoundModal" tabindex="-1" role="dialog" aria-labelledby="endOfRoundModalTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="endOfRoundModalTitle">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-          <div class="card-back card-body bg-light">
-            <div class="card-header bg-warning">
-              <h4 class="card-title text-center">Question 1</h4>
-              <p class="card-text">The film "2001: A Space Odyssey" was released on December 31st, 2000.</p>
-            </div>
-            <div class="mt-4">
-              <p class="card-text">This was the correct answer.</p>
-            </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="playAgainButton" data-dismiss="modal">Play Again?</button>
+            <button type="button" class="btn btn-primary" id="reviewQuestionsButton" data-dismiss="modal">Review Questions First?</button>
           </div>
         </div>
       </div>
     </div>
-
-
   </main>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>

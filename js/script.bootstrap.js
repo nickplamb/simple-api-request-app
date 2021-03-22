@@ -258,7 +258,9 @@ let triviaSession = (function(){
 
   // ----------------------Modal and Dialog Modal-----------------------
   function showDialog(title, text) {
-    
+    $('.modal .modal-title').text(title);
+    $('.modal .modal-body').text(text);
+    $('#endOfRoundModal').modal('show');
   }
 
   // -----------------------Helper Functions--------------------------
@@ -314,7 +316,8 @@ let triviaSession = (function(){
   // -----------return needed functions to outside IIFE---------------------------
   return {
     fetchCategories: fetchCategories,
-    prepareQuestionRetrieval: prepareQuestionRetrieval
+    prepareQuestionRetrieval: prepareQuestionRetrieval,
+    resetRound: resetQuestions
   };
 
 })();
@@ -322,3 +325,5 @@ let triviaSession = (function(){
 triviaSession.fetchCategories();
 
 $('#startForm').on('submit', e => triviaSession.prepareQuestionRetrieval(e));
+$('#playAgainButton').on('click', () => triviaSession.resetRound());
+// $('#reviewQuestionsButton').on('click', e => )
