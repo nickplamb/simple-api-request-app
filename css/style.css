@@ -1,140 +1,16 @@
-/* Different color pallet https://coolors.co/ef767a-456990-49beaa-49dcb1-eeb868*/
-/* :root {
---btn-bg-color: #49beaaff;
---btn-bg-hover: #49dcb1ff;
---bg-color: #456990ff;
---cards-bg-color: #eeb868ff;
---cards-bg-shadow: #eeb868ff;
---header-bg-color: #ef767aff;
-} */
-
-/* Color Pallet https://coolors.co/d0f1bf-b6d7b9-9abd97-646536-483d03 */
-/*:root {
-  --bg-color: #eae7dc;
-  --btn-bg-color: #e85a4f;
-  --btn-bg-hover: #e98074;
-  --cards-bg-color: #d8c9b4;
-  --cards-bg-shadow: #8e8d8a;
-  --header-bg-color: var(--btn-bg-color);
-  --text-color: #3a3938;
-  --tan: #d8c3a5;
-}*/
-
-/*:root {
-  --bg-color: #c7eef5; 
-  --btn-bg-color: #df622c;
-  --btn-bg-hover: #f07c41; 
-  --cards-bg-color: #55bdca; 
-  --cards-bg-shadow: #022249; 
-  --header-bg-color: #022249;
-  --header-text-color: #ffffff;
-  --text-color: #022249;
-  --tan: #d8c3a5;
-  --category-1-bg: #4197a8;
-  --category-2-bg: #f6b461;
-  --category-3-bg: #55bdca;
-  --category-4-bg: #7c9473;
-}*/
-
-:root {
-  --bg-color: #eae7dc; 
-  --btn-bg-color: #e85a4f;
-  --btn-bg-hover: #f07c41;
-  --cards-bg-color: #eeba8f; 
-  --cards-bg-shadow: #444444; 
-  --header-bg-color: #e85a4f;
-  --dk-bg-text-color: #ffffff;
-  --text-color: #444444;
-  --tan: #d8c3a5;
-  --category-1-bg: #156e80;
-  --category-5-bg: #009ba7;
-  --category-2-bg: #eeba8f;
-  --category-3-bg: #99c5ca;
-  --category-4-bg: #b2c0ad;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  color: var(--text-color);
-  font-family: "Times New Roman", Times, serif;
-  background-color: var(--bg-color);
-}
-
-header {
-  height: 80px;
-  background-color: var(--header-bg-color);
-}
-
-header h1 {
-  color: var(--dk-bg-text-color);
-  margin: 16px 30px;
-  display: inline-block;
-}
-
-header nav {
-  display: inline-block;
-}
-
 main {
-  max-width: 680px;
-  margin: 0 auto;
-  padding: 0 25px;
+  margin-top: 60px;
+}
+ul, li {
+  list-style-type: none;
+}
+.result-img {
+  width: 150px;
 }
 
-.start-form {
-  height: 450px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
 
-.start-form__item {
-  display: block;
-  margin: 5px auto;
-  width: 100%;
-  border-radius: 10px;
-}
 
-select{
-  height: 40px;
-  color: var(--text-color); 
-}
-
-section h2 {
-  text-align: center;
-}
-
-form {
-  padding: 0 40px;
-}
-
-button.start-form__item {
-  margin-top: 25px;
-  text-align: center;
-}
-
-.card-container {
-  max-width: 100%;
-}
-
-.card-container__card,
-.start-form {
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px 0;
-  background-color: var(--cards-bg-color);
-}
-
-.card {
-  box-shadow: 2px 2px 15px #919191; /*var(--cards-bg-shadow);/* */
-  border: none;
-  border-radius: 20px;
-}
-
-/* ---------------FLIP ANIMATION------------------------ */
+/* ----------------Animations---------------------------- */
 .card-container__card {
   background-color: transparent;
   perspective: 1000px;
@@ -152,6 +28,7 @@ button.start-form__item {
   transform-style: preserve-3d;
 }
 
+/* This class added by JS event handler when an answer is selected */
 .flip-over {
   transform: rotateY(180deg);
 }
@@ -165,143 +42,9 @@ button.start-form__item {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   border: none;
-  border-radius: 20px;
-}
-
-.card-front {
-  background-color: var(--cards-bg-color);
+  /* border-radius: 20px; */
 }
 
 .card-back {
-  background-color: var(--cards-bg-color);
   transform: rotateY(180deg);
-}
-
-/* ---------------------LISTS-------------------------- */
-ul {
-  padding: 0;
-}
-
-ul.answer-list {
-  width: 100%;
-  max-width: 500px;
-  list-style: none;
-  margin: 10px auto;
-}
-
-li {
-  width: auto;
-  margin: 18px auto;
-  list-style: none;
-}
-
-
-/* ---------------------BUTTONS------------------------- */
-button {
-  cursor: pointer;
-  color: var(--bg-color);
-  width: 100%;
-  max-height: 230px;
-  padding: 10px 20px;
-  background-color: var(--btn-bg-color);
-  border: none;
-  border-radius: 15px;
-  box-shadow: 2px 2px 2px #919191;
-}
-
-.btn-answer {
-  text-align: left;
-}
-
-button:hover {
-  background-color: var(--btn-bg-hover);
-  border: none;
-}
-
-button:focus,
-select:focus {
-  outline: none;
-  box-shadow: 2px 2px 5px var(--btn-bg-hover);
-  border-bottom: 3px solid var(--btn-bg-color);
-}
-
-.hidden {
-  display: none;
-}
-
-
-/* ---------modal---------- */
-
-#modal-container {
-  position: fixed;
-  padding: 20px;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  
-  /* to show it above other content */
-  z-index: 999; 
-  
-  /* to allow scrolling if the screen is not high enough*/
-  overflow: auto; 
-  
-  /* this is used to center the modal */
-  display: grid;
-  text-align: center;
-}
-
-#modal-container {
-  display: none;
-}
-
-#modal-container.is-visible {
-  display: block;
-
-}
-
-.modal {
-  margin: auto;
-  display: inline-block;
-  box-sizing: border-box;
-  background: #fff;
-  padding: 50px;
-  width: 100%;
-  max-width: 700px;
-  text-align: center;
-  border-radius: 15px;
-  max-width: 600px;
-  background-color: var(--cards-bg-color);
-}
-
-/* .modal-close {
-  float: right;
-  -webkit-appearance: none;
-  border: 0;
-  background: none;
-  color: #777;
-  text-decoration: underline;
-  display: block;
-} */
-
-.btn-modal {
-  margin: 15px 0;
-}
-
-.modal h1 {
-  margin-top: 0;
-}
-
-.modal p {
-  margin-bottom: 0;
-  margin-bottom: 10px;
-}
-
-img.answer-icon {
-  width: 150px;
-  display: block;
-  margin: 10px auto;
-  padding-top: 20px;
 }

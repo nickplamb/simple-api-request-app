@@ -1,4 +1,4 @@
-let triviaRound = (function(){
+let triviaSession = (function(){
 
   // Array of question objects with answers.
   let triviaQuestions = [];
@@ -31,13 +31,83 @@ let triviaRound = (function(){
     ]
   }
 
-  // Retrieve all Questions for this round.
-  function getAll() {
-    return triviaQuestions;
+  // Ajax request to API for all categories. push to allCategories, call populateCategoriesDropdown
+  function fetchCategories() {
+    let categoriesURL = 'https://opentdb.com/api_category.php';
+    return $.ajax(categoriesURL, { dataType: 'json' }
+    ).then(responseJSON => {
+      responseJSON.trivia_categories.forEach(category => {
+        let categoryListItem = {
+          id: category.id,
+          name: category.name
+        }
+        allCategories.push(categoryListItem);
+      });
+      populateCategoriesDropdown();
+    }).catch(e => {
+      console.error(e);
+    });
   }
 
-  // Add a new questions to this round.
-  function add(newQuestion) {
+  // Add all categories to categories dropdown on form.
+  function populateCategoriesDropdown() {
+    let dropdown = $('#categories');
+    allCategories.forEach(item => {
+      let listItem = $(`<option value="${item.id}">${item.name}</option>`);
+      dropdown.append(listItem);
+    });
+  }
+
+  function prepareQuestionRetrieval(e) {
+    e.preventDefault();
+
+    resetQuestions();
+
+    let url = apiBaseUrl;
+
+    let query = new Object;
+    query.amount = $('#num-of-questions').val();
+    query.category = $('#categories').val();
+    query.difficulty = $('#difficulties').val();
+    query.type = $('#question-type').val();
+
+    Object.entries(query).forEach(option => {
+      if (option[1] !== '') {
+        url += `&${option[0]}=${option[1]}`;
+      }
+    });
+    fetchQuestions(url)
+  }
+
+  function fetchQuestions(url) {
+    $.ajax(url, {dataType: 'json'}
+    ).then(responseJSON => {
+      if (responseJSON.results.length !== 0) {
+        responseJSON.results.forEach(item => {
+          let question = {
+            category: decodeBase64(item.category),
+            type: decodeBase64(item.type),
+            difficulty: decodeBase64(item.difficulty),
+            question: decodeBase64(item.question),
+            correct_answer: decodeBase64(item.correct_answer),
+            incorrect_answers: decodeBase64(item.incorrect_answers)
+          }
+          addQuestionToArray(question);
+        });
+      } else {
+        console.error('Too Specific');
+        let title = 'No questions found.';
+        let text = 'Please change your options and try again.';
+        showDialog(title, text);
+      }
+      displayQuestions();
+    }).catch(e => {
+      console.error(e);
+    });
+  }
+
+  // validate question
+  function addQuestionToArray(newQuestion) {
     if (typeof newQuestion === 'object') {
       if (compareArrays(Object.keys(newQuestion), questionObjectTemplate)) {
         triviaQuestions.push(newQuestion);
@@ -49,7 +119,163 @@ let triviaRound = (function(){
     }
   }
 
-  // Function to compare the array of keys in new question to array to required keys
+  // Grab all questions and loops through them, sending each to addListItem function.
+  function displayQuestions() {
+    // Grab all questions
+    let allQuestions = getAll();
+    let numOfQuestions = allQuestions.length;
+
+    // Loop through each question in the round
+    allQuestions.forEach((question, index) => {
+      addListItem(question, index, numOfQuestions);
+    });
+  }
+
+  // Create bullk of the cardd structure, event listeners for answer buttons, add shuffled answeer buttons.
+  function addListItem(question, questionIndex, numOfQuestions) {
+    let cardContainer = $('#card-container');
+
+    // Combine the correct answer and incorrect answers into new array
+    let possibleAnswers = question.incorrect_answers.slice();
+    possibleAnswers.push(question.correct_answer);
+
+    // Create elements for card structure.
+    let cardRow = $('<div></div').addClass('row justify-content-center card-container__row')
+    let card = $('<div></div>').addClass('card-container__card col-11 col-sm-10 col-md-8 col-lg-7 col-xl-5 my-3');
+    let questionNumberClass = 'question-' + (questionIndex+1);
+    let cardInner = $('<div></div>').addClass('card card-inner bg-light ' + questionNumberClass);
+    let cardFront = $('<div></div>').addClass('card-front card-body bg-light');
+    let cardHeader = $('<div></div>').addClass('card-header bg-warning mt-3');
+    let cardHeaderTitle = $('<h4></h4>').addClass('card-title text-center').text(`Question ${questionIndex+1}:`);
+    let cardHeaderText = $('<p></p>').addClass('card-text').text(question.question);
+    let answerList = $('<div></div>').addClass('mt-4 answer-btns').attr('id', 'q-answers-'+(questionIndex+1));
+    let cardBack = $('<div></div>').addClass('card-back card-body bg-light ' + questionNumberClass);
+    let cardBackResult = $('<div></div>').addClass('mt-4');
+    let cardBackAnswer = $('<p></p>').addClass('card-text card-result ' + questionNumberClass);
+    let cardBackImg = $('<img>').addClass(questionNumberClass + ' result-img');
+
+    // Attach event handler to the answerList element as a delegate.
+    answerList.on('click', 'button', e => answerHandler(e, question, numOfQuestions, questionNumberClass));
+
+    // Card Structure
+    // cardRow
+    //   card
+    //     cardInner
+    //       cardFront
+    //         cardHeader
+    //           cardHeaderTitle, cardHeaderText
+    //         answerList
+    //           answerButtons ...
+    //       cardBack
+    //          cardHeader
+    //            cardHeaderTitle, cardHeaderText
+    //          answerResponse // Created on click event when asnwer is selected
+    cardHeader.append(cardHeaderTitle, cardHeaderText);
+    cardFront.append(cardHeader.clone(), answerList);
+    cardBackResult.append(cardBackAnswer, cardBackImg);
+    cardBack.append(cardHeader.clone(), cardBackResult);
+    cardInner.append(cardFront, cardBack);
+    card.append(cardInner);
+    cardRow.append(card);
+    cardContainer.append(cardRow);
+
+    // array to allow me to randomize order of answers
+    let answerArr = [];
+
+    possibleAnswers.forEach((possibleAnswers, answerIndex) => {
+      let btnId = 'btn-' + questionIndex + '-' + answerIndex;
+      let answerButton = $('<button></button>')
+        .addClass('btn btn-outline-warning btn-block text-dark mt-3')
+        .attr('id', btnId)
+        .text(possibleAnswers)
+        .val(answerIndex + 1);
+      
+        answerArr.push(answerButton);
+    })
+
+    shuffleArray(answerArr);
+
+    answerArr.forEach(answerBtn => {
+      answerList.append(answerBtn);
+    })
+  }
+
+  // Called by event Listener, changes text and image on back of card based on answer. Flips over card.
+  function answerHandler(e, question, numOfQuestions, questionNumberClass) {
+    questionsAnswered++;
+    let selectedAnswer = e.target.innerText;
+    if(selectedAnswer === question.correct_answer) {
+      score++
+      $(`.card-result.${questionNumberClass}`).text(`The correct answer is: ${question.correct_answer}`);
+      $(`img.${questionNumberClass}`)
+        .attr({
+          src: 'img/correct_icon.svg',
+          alt: 'Your answer was correct!'
+        });
+    } else{
+      $(`.card-result.${questionNumberClass}`).text(`The correct answer is: ${question.correct_answer}`);
+      $(`img.${questionNumberClass}`)
+        .attr({
+          src: 'img/wrong_icon.svg',
+          alt: 'Your answer was incorrect'
+        });
+    }
+
+    if (questionsAnswered === numOfQuestions){
+      let title = '';
+      let text = '';
+      if (score === 0) {
+        title = 'You are not very good at this.';
+        text = 'You didn\'t get any correct.';
+        // totalScoreElement.innerText = 'You are not very good at this. You didn\'t get any correct.';
+      } else if (score <= numOfQuestions * 0.6){
+        title = 'Was that the best you could do?';
+        text = 'You only got ' + score + ' out of ' + numOfQuestions + '.';
+        // totalScoreElement.innerText = 'You gave it your best shot. You only got ' + score + ' out of ' + numOfQuestions + '.';
+      } else if (score === numOfQuestions) {
+        title = 'Ok, maybe you are pretty smart.';
+        text = 'You got a perfect score!';
+        // totalScoreElement.innerText = 'Ok, maybe you are pretty smart. You got a perfect score!';
+      } else {
+        title = 'You did pretty well!';
+        text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
+        // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
+      }
+
+      setTimeout(() => {
+        showDialog(title, text)
+      }, 2000);
+    }
+    $('.card-inner.' + questionNumberClass).addClass('flip-over');
+  }
+
+  // Retrieve all questions for this round (Nothing fetched from API here)
+  function getAll() {
+    return triviaQuestions;
+  }
+
+  // ----------------------Modal and Dialog Modal-----------------------
+  function showDialog(title, text) {
+    $('.modal .modal-title').text(title);
+    $('.modal .modal-body').text(text);
+    $('#endOfRoundModal').modal('show');
+  }
+
+  // -----------------------Helper Functions--------------------------
+  // Decode api response encoding
+  function decodeBase64(msg) {
+    if (typeof msg === 'object') {
+      let msgArr = [];
+      msg.forEach(item => {
+        msgArr.push(atob(item));
+      });
+      return msgArr;
+    } else {
+      return atob(msg);
+    }
+  }
+
+  // Compare array of new question object keys to template
   function compareArrays(arr1, template) {
     // Compare lengths
     if (arr1.length !== template.length) {
@@ -65,414 +291,36 @@ let triviaRound = (function(){
     return true;
   }
 
-  // Populate category array used by category dropdown
-  function loadCategories() {
-    let categoriesUrl = 'https://opentdb.com/api_category.php';
-    return fetch(categoriesUrl).then(response => {
-      return response.json();
-    }).then(json => {
-      json.trivia_categories.forEach(category => {
-        let categoryListItem = {
-          id: category.id,
-          name: category.name
-        }
-        allCategories.push(categoryListItem);
-      });
-      addCategoriesToDropDown();
-    }).catch(e => {
-      console.error(e)
-    })
-  }
-
-  // Populate dropdown for categories.
-  function addCategoriesToDropDown() {
-    let dropDown = document.querySelector('#categories');
-    allCategories.forEach(item => {
-      let listItem = document.createElement('option');
-      listItem.setAttribute('value', item.id);
-      listItem.innerText = item.name;
-
-      dropDown.appendChild(listItem);
-    });
-  }
-
-  // Build query string from start form. call fetchQuestions func. to make request.
-  function loadQuestions(e) {
-    e.preventDefault();
-
-    resetQuestions();
-
-    let url = apiBaseUrl;
-
-    let query = new Object;
-    query.amount = document.querySelector('#num-of-questions').value;
-    query.category = document.querySelector('#categories').value;
-    query.difficulty = document.querySelector('#difficulties').value;
-    query.type = document.querySelector('#question-type').value;
-
-    // Add the selected options to query string
-    Object.entries(query).forEach(option => {
-      if (option[1] !== '') {
-        url += '&' + option[0] + '=' + option[1];
-      }
-    });
-    fetchQuestions(url);
-  }
-
-  // Make api request, add response to question array, show questions to user
-  function fetchQuestions(url) {
-    return fetch(url).then(response => {
-        return response.json();
-      }).then(json => {
-        if (json.results.length !== 0) {
-          json.results.forEach(item => {
-            let question = {
-              category: decodeBase64(item.category),
-              type: decodeBase64(item.type),
-              difficulty: decodeBase64(item.difficulty),
-              question: decodeBase64(item.question),
-              correct_answer: decodeBase64(item.correct_answer),
-              incorrect_answers: decodeBase64(item.incorrect_answers)
-            }
-            add(question);
-          });
-        } else {
-          console.error('Too Specific');
-          // Display error message to user:
-          // 'There are no ${difficulty} ${questionType} questions in ${category}'
-          // with logic to determine which options were selected and taylor response.
-        }
-        displayQuestions();
-      }).catch(e => {
-        console.log(e)
-      })
-  }
-
-  // Grab question array and loop through, sending each to addListItem func. for html creation
-  function displayQuestions() {
-    // Grab all questions
-    let allQuestions = getAll();
-    let numOfQuestions = allQuestions.length;
-
-    // Loop through each question in the round
-    allQuestions.forEach((question, index) => {
-      addListItem(question, index, numOfQuestions);
-    });
-  }
-
-  // Creates a div.card-container__card with the question and a ul of buttons as answers.
-  function addListItem(question, questionIndex, numOfQuestions) {
-    let cardContainer = document.querySelector('.card-container');
-
-    // Combine the correct answer and incorrect answers into new array
-    let possibleAnswers = question.incorrect_answers.slice();
-    possibleAnswers.push(question.correct_answer);
-    
-    // Container for each card
-    let card = document.createElement('li');
-    card.classList.add('card-container__card');
-    card.classList.add('question-card__' + (questionIndex + 1));
-    
-    // --------------Card Structure-------------
-    // Card inner
-    let cardInner = document.createElement('div');
-    cardInner.classList.add('card-inner', 'card');
-    // div used to caluclate the height of the combined content of the card to determine card height
-    let heightCalcDiv = document.createElement('div');
-    // card front. Shows question with list of answers
-    let cardFront = document.createElement('div');
-    cardFront.classList.add('card-front');
-    // Card back. Will flip over when answer selected and show right or wrong.
-    let cardBack = document.createElement('div');
-    cardBack.classList.add('card-back');
-    cardBack.setAttribute('id', 'card-back__'+(questionIndex + 1))
-
-    // --------------FRONT-------------------
-    // Header
-    let cardFrontHeader = document.createElement('h3');
-    cardFrontHeader.innerText = 'Question ' + (questionIndex + 1) + ':';
-    // Question
-    let cardQuestion = document.createElement('p');
-    cardQuestion.innerText = question.question;
-    // Answer List
-    let answerList = document.createElement('ul');
-    answerList.classList.add('answer-list');
-
-    card.appendChild(cardInner);
-
-    // Fill card Front
-    heightCalcDiv.appendChild(cardFrontHeader);
-    heightCalcDiv.appendChild(cardQuestion);
-    heightCalcDiv.appendChild(answerList);
-
-    cardInner.appendChild(cardFront);
-    cardInner.appendChild(cardBack);
-
-    // array to allow me to randomize order of answers
-    let answerArr = [];
-
-    // Loop through possible answers, create li with button for each
-    // Add each li to .answer-list ul
-    possibleAnswers.forEach((possibleAnswer, answerIndex) => {
-      let answerListItem = document.createElement('li');
-      
-      // Create Button with class and possible answer
-      let answerbtn = document.createElement('button');
-      // create unique button ID
-      let btnId = 'btn-' + questionIndex + '-' + answerIndex;
-
-      // set btn attributes, text, and value
-      answerbtn.classList.add('btn-answer');
-      answerbtn.setAttribute('id', btnId);
-      answerbtn.innerText = possibleAnswer;
-      answerbtn.value = answerIndex+1;
-
-      // Create event handler for each button
-      // This event handler will call the function to create the back of the card.
-      createAnswerEventHandler(question, btnId, numOfQuestions);
-
-      // add button to li
-      answerListItem.appendChild(answerbtn);
-      // add li to anser list ul
-      answerArr.push(answerListItem);
-    });
-
-    shuffleArray(answerArr);
-    answerArr.forEach(item => {
-      answerList.appendChild(item);
-    });
-
-    function createAnswerEventHandler(question, btnId, numOfQuestions) {
-      let parentCard = document.querySelector('.card-container')
-
-      if (parentCard.addEventListener) {
-        parentCard.addEventListener('click', e => answerHandler(e, question, btnId, numOfQuestions), false);
-      }else if (parentCard.attachEvent) {
-        parentCard.attachEvent('onclick', e => answerHandler(e, question, btnId, numOfQuestions));
-      }
+  // Randomize array in-place using Durstenfeld shuffle algorithm
+  // https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+  function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
     }
-
-    function createCardBack(question, answerSelected, numOfQuestions) {
-      // let cardInner = document.querySelector('.card-inner');
-      // let cardBack = document.querySelector('.card-back');
-      let cardBackHeader = document.createElement('h3');
-      let cardBackQuestion = document.createElement('p');
-      let cardBackAnswer = document.createElement('p');
-      let cardBackImg = document.createElement('img');
-      cardBackImg.classList.add('answer-icon');
-  
-      cardBackQuestion.innerText = question.question;
-      cardBackAnswer.innerText = question.correct_answer;
-  
-      // Determine if the answer selected is correct.
-      if (answerSelected === question.correct_answer) {
-        score += 1;
-        cardBackImg.src = 'img/correct_icon.svg';
-        cardBackHeader.innerText = 'Correct!';
-      } else {
-        cardBackImg.src = 'img/wrong_icon.svg';
-        cardBackHeader.innerText = 'Wrong!';
-      }
-  
-      cardBack.appendChild(cardBackHeader);
-      cardBack.appendChild(cardBackQuestion);
-      cardBack.appendChild(cardBackAnswer);
-      cardBack.appendChild(cardBackImg);
-  
-      // This is the number of questions answered in this round.
-      questionsAnswered++;
-      // console.log('questions answered ' + questionsAnswered);
-      // console.log('# of questions ' + numOfQuestions);
-  
-      if (questionsAnswered === numOfQuestions) {
-        // let totalScoreElement = document.createElement('p');
-        let title = '';
-        let text = '';
-        if (score === 0) {
-          title = 'You are not very good at this.';
-          text = 'You didn\'t get any correct.';
-          // totalScoreElement.innerText = 'You are not very good at this. You didn\'t get any correct.';
-        } else if (score <= numOfQuestions * 0.6){
-          title = 'Was that the best you could do?';
-          text = 'You only got ' + score + ' out of ' + numOfQuestions + '.';
-          // totalScoreElement.innerText = 'You gave it your best shot. You only got ' + score + ' out of ' + numOfQuestions + '.';
-        } else if (score === numOfQuestions) {
-          title = 'Ok, maybe you are pretty smart.';
-          text = 'You got a perfect score!';
-          // totalScoreElement.innerText = 'Ok, maybe you are pretty smart. You got a perfect score!';
-        } else {
-          title = 'You did pretty well!';
-          text = 'You got ' + score + ' out of ' + numOfQuestions + '.';
-          // totalScoreElement.innerText = 'You did pretty well! You got ' + score + ' out of ' + numOfQuestions + '.';
-        }
-  
-  
-        setTimeout(() => {
-          showDialog(title, text)
-        }, 2000);
-      }
-  
-      cardInner.classList.add('flip-over');
-    }
-
-    function answerHandler(e, question, btnId, numOfQuestions) {
-      e.preventDefault();
-  
-      // each handler is a seperate instance.
-      //http://jsfiddle.net/H97WY/
-      if (e.target.id == btnId) { 
-        // console.log('event fired:');
-        // console.log(e);
-        let buttonSelected = document.querySelector('#'+btnId)
-        let answerSelected = buttonSelected.innerText
-  
-        createCardBack(question, answerSelected, numOfQuestions);
-      }
-    }
-
-    // Card front must be set to position:absolute for card flip to work.
-    // This causes long questions/answers to extend beyond the bottom of card on narrow screens.
-    // This calculation places the content then measures the height of heightCalcDiv and resizes the height of the card accordingly.
-    // https://stackoverflow.com/a/5944059/15158461
-    cardFront.appendChild(heightCalcDiv);
-    // heightCalcDiv.style.visibility = 'hidden';
-    cardContainer.appendChild(card);
-    let contentHeight = parseInt(window.getComputedStyle(heightCalcDiv).height);
-    if (contentHeight > 315) {
-      card.style.height = (contentHeight + 110) + 'px';
-    }
-    // heightCalcDiv.style.visibility = '';
   }
 
-  // uses the cloneNode t
-  function removeAnswerListeners() {
-    let el  = document.querySelector('.card-container');
-    //https://stackoverflow.com/a/34693314/15158461
-    el.parentNode.replaceChild(el.cloneNode(true), el);
-  }
-
-  // removes all cards, clears questions array, and resets score variable.
+  // Reset questions and score for next round
   function resetQuestions() {
-    document.querySelectorAll('.card-container__card').forEach(element => element.remove());
-    removeAnswerListeners();
+    $('.card-container__row').remove();
     triviaQuestions = [];
     score = 0;
     questionsAnswered = 0;
   }
 
-    // Response is base64 encoded for special character, decode base64
-  function decodeBase64(msg) {
-    if (typeof msg === 'object') {
-      let msgArr = [];
-      msg.forEach(item => {
-        msgArr.push(atob(item));
-      });
-      return msgArr;
-    } else {
-      return atob(msg);
-    }
-  }
 
-  // -------------Modal---------------- 
-  function showModal(title, text) {
-    let modalContainer = document.querySelector('#modal-container');
-    
-    // Clear all existing modal content
-    modalContainer.innerHTML = '';
-  
-    let modal = document.createElement('div');
-    modal.classList.add('modal');
-
-    let titleElement = document.createElement('h1');
-    titleElement.innerText = title;
-
-    let contentElement = document.createElement('p');
-    contentElement.innerText = text;
-
-    // modal.appendChild(closeButtonElement);
-    modal.appendChild(titleElement);
-    modal.appendChild(contentElement);
-    modalContainer.appendChild(modal);
-
-    modalContainer.classList.add('is-visible');
-  }
-
-  function hideModal() {
-    let modalContainer = document.querySelector('#modal-container');
-    modalContainer.classList.remove('is-visible');
-  }
-
-  // ------------Dialog Modal--------------------
-  function showDialog( title, text) {
-    showModal(title, text);
-  
-    let modalContainer = document.querySelector('#modal-container');
-  
-    let modal = modalContainer.querySelector('.modal');
-  
-    let resetTrivia = document.createElement('button');
-    resetTrivia.classList.add('modal-reset', 'btn-modal');
-    resetTrivia.innerText = 'Play Again?';
-  
-    let reviewTrivia = document.createElement('button');
-    reviewTrivia.classList.add('modal-review', 'btn-modal');
-    reviewTrivia.innerText = 'Review questions?';
-  
-    modal.appendChild(resetTrivia);
-    modal.appendChild(reviewTrivia);
-  
-    resetTrivia.focus();
-
-    reviewTrivia.addEventListener('click', hideModal);
-    resetTrivia.addEventListener('click', () => {
-      resetQuestions();
-      hideModal();
-    });
-  }
-
-  window.addEventListener('keydown', e => {
-    let modalContainer = document.querySelector('#modal-container');
-    if (e.key === 'Escape' && modalContainer.classList.contains('is-visible')) {
-      hideModal();
-    }
-  });
-  
-  window.addEventListener('click', e => {
-    let modalContainer = document.querySelector('#modal-container');
-    let target = e.target;
-    if (target === modalContainer) {
-      hideModal();
-    }
-  }); 
-
-
-  // Return object with call to available functions
+  // -----------return needed functions to outside IIFE---------------------------
   return {
-    add: add,
-    getAll: getAll,
-    addListItem: addListItem,
-    loadQuestions: loadQuestions,
-    loadCategories: loadCategories,
-    resetQuestions: resetQuestions
+    fetchCategories: fetchCategories,
+    prepareQuestionRetrieval: prepareQuestionRetrieval,
+    resetRound: resetQuestions
   };
+
 })();
 
-/* Randomize array in-place using Durstenfeld shuffle algorithm */
-// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-function shuffleArray(array) {
-  for (var i = array.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var temp = array[i];
-      array[i] = array[j];
-      array[j] = temp;
-  }
-}
+triviaSession.fetchCategories();
 
-triviaRound.loadCategories();
-
-// -------Event listeners-----
-let startForm = document.querySelector('#form');
-startForm.addEventListener('submit', (e) => {
-  // triviaRound.resetQuestions();
-  triviaRound.loadQuestions(e);
-});
+$('#startForm').on('submit', e => triviaSession.prepareQuestionRetrieval(e));
+$('#playAgainButton').on('click', () => triviaSession.resetRound());
