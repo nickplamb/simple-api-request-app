@@ -106,8 +106,6 @@ let triviaSession = (function(){
     });
   }
 
-
-
   // validate question
   function addQuestionToArray(newQuestion) {
     if (typeof newQuestion === 'object') {
@@ -326,4 +324,3 @@ triviaSession.fetchCategories();
 
 $('#startForm').on('submit', e => triviaSession.prepareQuestionRetrieval(e));
 $('#playAgainButton').on('click', () => triviaSession.resetRound());
-// $('#reviewQuestionsButton').on('click', e => )
