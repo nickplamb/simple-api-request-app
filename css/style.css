@@ -8,6 +8,10 @@ ul, li {
   width: 150px;
 }
 
+.hidden {
+  display: none;
+}
+
 
 
 /* ----------------Animations---------------------------- */

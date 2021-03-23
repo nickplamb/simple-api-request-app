@@ -1,3 +1,4 @@
+// Wrap main portion of the app in a Revealing Module Pattern
 let triviaSession = (function(){
 
   // Array of question objects with answers.
@@ -61,7 +62,7 @@ let triviaSession = (function(){
   function prepareQuestionRetrieval(e) {
     e.preventDefault();
 
-    resetQuestions();
+    resetRound();
 
     let url = apiBaseUrl;
 
@@ -95,10 +96,10 @@ let triviaSession = (function(){
           addQuestionToArray(question);
         });
       } else {
-        console.error('Too Specific');
+        // console.error('Too Specific');
         let title = 'No questions found.';
         let text = 'Please change your options and try again.';
-        showDialog(title, text);
+        showDialog(title, text, 'optionError');
       }
       displayQuestions();
     }).catch(e => {
@@ -243,7 +244,7 @@ let triviaSession = (function(){
       }
 
       setTimeout(() => {
-        showDialog(title, text)
+        showDialog(title, text, 'endOfRound')
       }, 2000);
     }
     $('.card-inner.' + questionNumberClass).addClass('flip-over');
@@ -255,10 +256,21 @@ let triviaSession = (function(){
   }
 
   // ----------------------Modal and Dialog Modal-----------------------
-  function showDialog(title, text) {
+  function showDialog(title, text, modalType) {
     $('.modal .modal-title').text(title);
     $('.modal .modal-body').text(text);
-    $('#endOfRoundModal').modal('show');
+
+    // Allows for two different purposes for the same modal.
+    if (modalType === 'optionError') {
+      // When start form options selected are too specific
+      $('#dismissDialogButton').text('Try Again');
+      $('#restRoundButton').addClass('hidden');
+    } else {
+      // End of round modal.
+      $('#restRoundButton').removeClass('hidden');
+      $('#dismissDialogButton').text('Review Questions');
+    }
+    $('#notifyModal').modal('show');
   }
 
   // -----------------------Helper Functions--------------------------
@@ -303,7 +315,8 @@ let triviaSession = (function(){
   }
 
   // Reset questions and score for next round
-  function resetQuestions() {
+  function resetRound() {
+
     $('.card-container__row').remove();
     triviaQuestions = [];
     score = 0;
@@ -315,7 +328,7 @@ let triviaSession = (function(){
   return {
     fetchCategories: fetchCategories,
     prepareQuestionRetrieval: prepareQuestionRetrieval,
-    resetRound: resetQuestions
+    resetRound: resetRound
   };
 
 })();
@@ -323,4 +336,4 @@ let triviaSession = (function(){
 triviaSession.fetchCategories();
 
 $('#startForm').on('submit', e => triviaSession.prepareQuestionRetrieval(e));
-$('#playAgainButton').on('click', () => triviaSession.resetRound());
+$('#restRoundButton').on('click', () => triviaSession.resetRound());

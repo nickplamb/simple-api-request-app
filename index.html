@@ -34,12 +34,11 @@
     </nav>
   </header>
   <main class="bg-white">
-    <div id="modal-container"></div>
     <div class="row justify-content-center">
       <div class="col-11 col-sm-10 col-md-8 col-lg-7 col-xl-5">
         <h1 class="text-center my-4">Welcome to Nick's Trivia</h1>
         <div class="card bg-light">
-          <div class="card-header text-center">
+          <div class="card-header text-center bg-warning">
             <h2 class="card-title">Select Your Options</h2>
           </div>
           <div class="card-body">
@@ -86,11 +85,11 @@
     <div class="my-2" id="card-container">
     </div>
 
-    <div class="modal fade" id="endOfRoundModal" tabindex="-1" role="dialog" aria-labelledby="endOfRoundModalTitle" aria-hidden="true">
+    <div class="modal fade" id="notifyModal" tabindex="-1" role="dialog" aria-labelledby="notifyModalTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="endOfRoundModalTitle">Modal title</h5>
+            <h5 class="modal-title" id="notifyModalTitle">Modal title</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
@@ -98,8 +97,8 @@
           <div class="modal-body">
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="playAgainButton" data-dismiss="modal">Play Again?</button>
-            <button type="button" class="btn btn-primary" id="reviewQuestionsButton" data-dismiss="modal">Review Questions First?</button>
+            <button type="button" class="btn btn-warning" id="restRoundButton" data-dismiss="modal">Play Again</button>
+            <button type="button" class="btn btn-warning" id="dismissDialogButton" data-dismiss="modal">Review Questions</button>
           </div>
         </div>
       </div>
