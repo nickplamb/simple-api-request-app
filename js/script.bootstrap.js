@@ -96,9 +96,9 @@ let triviaSession = (function(){
         });
       } else {
         console.error('Too Specific');
-        // Display error message to user:
-        // 'There are no ${difficulty} ${questionType} questions in ${category}'
-        // with logic to determine which options were selected and taylor response.
+        let title = 'No questions found.';
+        let text = 'Please change your options and try again.';
+        showDialog(title, text);
       }
       displayQuestions();
     }).catch(e => {
