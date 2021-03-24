@@ -1,0 +1,23 @@
+{
+  "name": "trivia",
+  "version": "1.0.0",
+  "description": "A simple trivia app using the opentriviaDB",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nickplamb/simple-api-request-app.git"
+  },
+  "author": "Nicholas Lamb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nickplamb/simple-api-request-app/issues"
+  },
+  "homepage": "https://github.com/nickplamb/simple-api-request-app#readme",
+  "devDependencies": {
+    "eslint": "^7.22.0",
+    "prettier": "^2.2.1"
+  }
+}
