@@ -1,18 +1,16 @@
 main {
   margin-top: 60px;
 }
-ul, li {
+ul,
+li {
   list-style-type: none;
 }
 .result-img {
   width: 150px;
 }
-
 .hidden {
   display: none;
 }
-
-
 
 /* ----------------Animations---------------------------- */
 .card-container__card {
@@ -22,7 +20,6 @@ ul, li {
   min-height: 100%;
   max-height: 100%;
 }
-
 .card-inner {
   position: relative;
   width: 100%;
@@ -31,12 +28,10 @@ ul, li {
   transition: transform 0.6s;
   transform-style: preserve-3d;
 }
-
 /* This class added by JS event handler when an answer is selected */
 .flip-over {
   transform: rotateY(180deg);
 }
-
 .card-front,
 .card-back {
   position: absolute;
@@ -48,7 +43,6 @@ ul, li {
   border: none;
   /* border-radius: 20px; */
 }
-
 .card-back {
   transform: rotateY(180deg);
 }
